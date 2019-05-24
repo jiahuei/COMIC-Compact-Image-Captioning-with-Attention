@@ -42,28 +42,6 @@ if not os.path.isfile(dset_path):
     utils.extract_zip(zip_path)
     os.remove(zip_path)
 
-### Get the image files ###
-tpath = pjoin(dset_dir, 'train2014')
-vpath = pjoin(dset_dir, 'val2014')
-img_exists = os.path.exists(tpath) and os.path.exists(vpath) and \
-                len(os.listdir(tpath) + os.listdir(vpath)) == 113287
-tzip_path = pjoin(dset_dir, 'train2014.zip')
-skip_dl = img_exists or os.path.isfile(tzip_path)
-if not skip_dl:
-    zip_path = utils.maybe_download_from_url(
-        r'http://images.cocodataset.org/zips/train2014.zip',
-        dset_dir)
-    utils.extract_zip(zip_path)
-    os.remove(zip_path)
-vzip_path = pjoin(dset_dir, 'val2014.zip')
-skip_dl = img_exists or os.path.isfile(vzip_path)
-if not skip_dl:
-    zip_path = utils.maybe_download_from_url(
-        r'http://images.cocodataset.org/zips/val2014.zip',
-        dset_dir)
-    utils.extract_zip(zip_path)
-    os.remove(zip_path)
-raise SystemExit
 
 ### Read the raw JSON file ###
 
@@ -146,4 +124,36 @@ if output_prefix is not None:
             json.dump(itow, f)
     
     print('INFO: Saved output text files.\n')
-    
+
+
+### Get the image files ###
+img_all = train_set.union(valid_set).union(test_set)
+tpath = pjoin(dset_dir, 'train2014')
+vpath = pjoin(dset_dir, 'val2014')
+ext = exv = []
+if os.path.exists(tpath):
+    ext = os.listdir(tpath)
+    ext = [pjoin('train2014', i) for i in ext]
+if os.path.exists(vpath):
+    exv = os.listdir(vpath)
+    exv = [pjoin('val2014', i) for i in exv]
+ex = set(ext + exv)
+img_exists = len(ex.intersection(img_all)) == len(img_all)
+
+tzip_path = pjoin(dset_dir, 'train2014.zip')
+skip_dl = img_exists or os.path.isfile(tzip_path)
+if not skip_dl:
+    zip_path = utils.maybe_download_from_url(
+        r'http://images.cocodataset.org/zips/train2014.zip',
+        dset_dir)
+    utils.extract_zip(zip_path)
+    os.remove(zip_path)
+vzip_path = pjoin(dset_dir, 'val2014.zip')
+skip_dl = img_exists or os.path.isfile(vzip_path)
+if not skip_dl:
+    zip_path = utils.maybe_download_from_url(
+        r'http://images.cocodataset.org/zips/val2014.zip',
+        dset_dir)
+    utils.extract_zip(zip_path)
+    os.remove(zip_path)
+

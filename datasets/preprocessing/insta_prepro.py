@@ -52,21 +52,6 @@ if not json_exists:
 if os.path.isfile(tgz_path):
     os.remove(tgz_path)
 
-### Get the image files ###
-img_exists = os.path.exists(pjoin(dset_dir, 'images')) and \
-                len(os.listdir(pjoin(dset_dir, 'images'))) == 648761
-tgz_path = pjoin(dset_dir, 'images.tar.gz')
-skip_dl = img_exists or os.path.isfile(tgz_path)
-if not skip_dl:
-    utils.maybe_download_from_google_drive(
-                        r'0B3xszfcsfVUBVkZGU2oxYVl6aDA',
-                        tgz_path,
-                        file_size=20*1024**3)
-if not img_exists:
-    utils.extract_tar_gz(tgz_path)
-if os.path.isfile(tgz_path):
-    os.remove(tgz_path)
-
 # For tokenization
 # https://github.com/cesc-park/attend2u/blob/master/scripts/generate_dataset.py
 try:
@@ -232,9 +217,6 @@ if output_prefix is not None:
                   (out_path, output_prefix, suffix), 'w') as f:
             json.dump(itow, f)
     
-    print('INFO: Saved output text files.\n')
-    
-    
     # Generate COCO style annotation file
     test_ann = dict(images=[],
                     info='',
@@ -253,9 +235,29 @@ if output_prefix is not None:
     
     with open(pjoin(out_path, 'captions_insta_test1.json'), 'w') as f:
         json.dump(test_ann, f)
+    
+    print('INFO: Saved output text files.\n')
 
 
-
+### Get the image files ###
+img_all = train_set.union(valid_set).union(test_set)
+ex = []
+if os.path.exists(pjoin(dset_dir, 'images')):
+    ex = os.listdir(pjoin(dset_dir, 'images'))
+    ex = [pjoin('images', i) for i in ex]
+ex = set(ex)
+img_exists = len(ex.intersection(img_all)) == len(img_all)
+tgz_path = pjoin(dset_dir, 'images.tar.gz')
+skip_dl = img_exists or os.path.isfile(tgz_path)
+if not skip_dl:
+    utils.maybe_download_from_google_drive(
+                        r'0B3xszfcsfVUBVkZGU2oxYVl6aDA',
+                        tgz_path,
+                        file_size=20*1024**3)
+if not img_exists:
+    utils.extract_tar_gz(tgz_path)
+if os.path.isfile(tgz_path):
+    os.remove(tgz_path)
 
 
 

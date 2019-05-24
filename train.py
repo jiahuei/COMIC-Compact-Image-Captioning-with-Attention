@@ -16,6 +16,7 @@ import train_fn as train
 import os, sys, argparse
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'common'))
 pjoin = os.path.join
+CURR_DIR = os.path.dirname(__file__)
 
 
 def create_parser():
@@ -24,25 +25,27 @@ def create_parser():
         description='lol')
     
     parser.add_argument(
-        '--name', type=str, required=True,
+        '--name', type=str, default='lstm',
         help='The logging name.')
     parser.add_argument(
-        '--dataset_dir', type=str, required=True,
+        '--dataset_dir', type=str,
+        default=pjoin(CURR_DIR, 'datasets', 'MSCOCO_captions'),
         help='The dataset directory.')
     parser.add_argument(
-        '--dataset_file_pattern', type=str, required=True,
+        '--dataset_file_pattern', type=str,
+        default='coco_{}_w5_s20',
         help='The dataset file pattern, example: `coco_{}_w5_s20`.')
     
     parser.add_argument(
-        '--token_type', type=str, required=True,
+        '--token_type', type=str, default='radix',
         choices=['radix', 'word', 'char'],
         help='The language model, from `radix`, `word, `char`.')
     parser.add_argument(
-        '--radix_base', type=int, required=True,
-        help='The base for Base-N models.')
+        '--radix_base', type=int, default=256,
+        help='The base for Radix models.')
     
     parser.add_argument(
-        '--cnn_name', type=str, required=True,
+        '--cnn_name', type=str, default='inception_v1',
         help='The CNN model name.')
     parser.add_argument(
         '--cnn_input_size', type=str, default='224,224',
@@ -51,10 +54,10 @@ def create_parser():
         '--cnn_input_augment', type=bool, default=True,
         help='Whether to augment input images.')
     parser.add_argument(
-        '--cnn_fm_attention', type=str, required=True,
-        help='String, a list of feature map for attention, comma-separated.')
+        '--cnn_fm_attention', type=str, default='Mixed_4f',
+        help='String, name of feature map for attention.')
     parser.add_argument(
-        '--cnn_fm_projection', type=str, required=True,
+        '--cnn_fm_projection', type=str, default='tied',
         choices=['none', 'independent', 'tied'],
         help='String, feature map projection, from `none`, `independent`, `tied`.')
     
@@ -77,7 +80,7 @@ def create_parser():
         help='Whether to enable variational recurrent dropout.')
     
     parser.add_argument(
-        '--attn_num_heads', type=int, required=True,
+        '--attn_num_heads', type=int, default=8,
         help='The number of attention heads.')
     parser.add_argument(
         '--attn_context_layer', type=bool, default=False,
@@ -160,15 +163,17 @@ if __name__ == '__main__':
     elif args.run == 3:
         rand_seed = 123456789
     
-    root = os.path.dirname(__file__)
-    if 'insta' in args.dataset_file_pattern:
-        log_root = pjoin(root, 'insta')
-    else:
-        log_root = pjoin(root, 'mscoco')
-    name = '{}_{}_{}_{}_h{}_{}'.format(
-        args.name, args.token_type,
-        args.attn_alignment_method, args.attn_probability_fn,
-        args.attn_num_heads, args.cnn_fm_projection[:3])
+    root = pjoin(CURR_DIR, 'experiments')
+    log_root = pjoin(root, args.dataset_file_pattern.split('_')[0])
+    name = '_'.join([
+            args.dataset_file_pattern.split('_')[0],
+            args.token_type,
+            args.attn_alignment_method,
+            args.attn_probability_fn,
+            'h{}'.format(args.attn_num_heads),
+            args.cnn_fm_projection[:3],
+            args.name,
+            ])
     log_path = pjoin(log_root, '{}_run_{:02d}'.format(name, args.run))
     cnn_ft_log = '{}_cnnFT_run_{:02d}'.format(name, args.run)
     cnn_ft_log = pjoin(log_root, cnn_ft_log)

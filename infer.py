@@ -16,6 +16,7 @@ import configuration as conf
 import ops
 from natural_sort import natural_keys as nat_key
 pjoin = os.path.join
+CURR_DIR = os.path.dirname(__file__)
 _DEBUG = False
 
 
@@ -29,11 +30,12 @@ def create_parser():
         description='lol')
     
     parser.add_argument(
-        '--infer_set', type=str,
+        '--infer_set', type=str, default='test',
         choices=['test', 'valid', 'coco_test', 'coco_valid'],
         help='The split to perform inference on.')
     parser.add_argument(
-        '--dataset_dir', type=str, required=True,
+        '--dataset_dir', type=str,
+        default=pjoin(CURR_DIR, 'datasets', 'MSCOCO_captions'),
         help='Dataset directory.')
     parser.add_argument(
         '--run_inference', type=bool, default=True,
@@ -45,7 +47,7 @@ def create_parser():
         '--save_attention_maps', type=bool, default=True,
         help='Whether to save attention maps to disk as pickle file.')
     parser.add_argument(
-        '--gpu', type=str, required=True,
+        '--gpu', type=str, default='0',
         help='The gpu number.')
     
     parser.add_argument(
@@ -59,16 +61,17 @@ def create_parser():
         help='The maximum caption length allowed during inference.')
     
     parser.add_argument(
-        '--batch_size_infer', type=int, required=True,
+        '--batch_size_infer', type=int, default=25,
         help='The batch size.')
     parser.add_argument(
         '--infer_checkpoints_dir', type=str, required=True,
         help='The directory containing the checkpoint files.')
     parser.add_argument(
-        '--infer_checkpoints', type=str, required=True,
+        '--infer_checkpoints', type=str, default='all',
         help='The checkpoint numbers to be evaluated. Comma-separated.')
     parser.add_argument(
-        '--annotations_file', type=str, default='annotations/captions_val2014.json',
+        '--annotations_file', type=str,
+        default='annotations/captions_val2014.json',
         help='The annotations file. Example: `annotations/captions_val2014.json`')
     
     return parser
