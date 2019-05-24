@@ -10,7 +10,7 @@ from __future__ import division
 from __future__ import print_function
 
 import os, sys, argparse
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'common'))
+sys.path.append(os.path.join(os.path.dirname(__file__), 'common'))
 import infer_fn as infer
 import configuration as conf
 import ops

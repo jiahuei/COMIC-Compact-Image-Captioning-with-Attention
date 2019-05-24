@@ -14,7 +14,7 @@ from __future__ import print_function
 
 import train_fn as train
 import os, sys, argparse
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'common'))
+sys.path.append(os.path.join(os.path.dirname(__file__), 'common'))
 pjoin = os.path.join
 CURR_DIR = os.path.dirname(__file__)
 
@@ -33,7 +33,7 @@ def create_parser():
         help='The dataset directory.')
     parser.add_argument(
         '--dataset_file_pattern', type=str,
-        default='coco_{}_w5_s20',
+        default='coco_{}_w5_s20_include_restval',
         help='The dataset file pattern, example: `coco_{}_w5_s20`.')
     
     parser.add_argument(

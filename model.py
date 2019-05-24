@@ -12,7 +12,7 @@ from __future__ import print_function
 import sys, os
 import tensorflow as tf
 from model_base import ModelBase
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'common'))
+sys.path.append(os.path.join(os.path.dirname(__file__), 'common'))
 import ops
 _shape = ops.shape
 
