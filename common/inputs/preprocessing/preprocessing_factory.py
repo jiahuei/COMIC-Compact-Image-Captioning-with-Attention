@@ -23,7 +23,6 @@ import tensorflow as tf
 from inputs.preprocessing import cifarnet_preprocessing
 from inputs.preprocessing import cifar_preprocessing
 from inputs.preprocessing import inception_preprocessing_radix as inception_preprocessing
-from inputs.preprocessing import lenet_preprocessing
 from inputs.preprocessing import vgg_preprocessing
 
 slim = tf.contrib.slim
@@ -49,21 +48,15 @@ def get_preprocessing(name, is_training=False):
       'cifarnet': cifarnet_preprocessing,
       'inception': inception_preprocessing,
       'inception_v1': inception_preprocessing,
-      'inception_v1a': inception_preprocessing,
       'inception_v2': inception_preprocessing,
       'inception_v3': inception_preprocessing,
       'inception_v4': inception_preprocessing,
       'inception_resnet_v1': inception_preprocessing,
       'inception_resnet_v2': inception_preprocessing,
-      'lenet': lenet_preprocessing,
-      'lenet_plus': lenet_preprocessing,
       'mobilenet_v1': inception_preprocessing,
       'mobilenet_v2': inception_preprocessing,
       'mobilenet_v2_035': inception_preprocessing,
       'mobilenet_v2_140': inception_preprocessing,
-      'mobilenet_v2a': inception_preprocessing,
-      'mobilenet_v2b': inception_preprocessing,
-      'mobilenet_v2_cifar': cifar_preprocessing,
       'nasnet_mobile': inception_preprocessing,
       'nasnet_small': inception_preprocessing,
       'nasnet_large': inception_preprocessing,
@@ -79,8 +72,6 @@ def get_preprocessing(name, is_training=False):
       'vgg_a': vgg_preprocessing,
       'vgg_16': vgg_preprocessing,
       'vgg_19': vgg_preprocessing,
-      'c2d_rnn_residual_cifar': cifar_preprocessing,
-      'c2d_rnn_residual_cifar4': cifar_preprocessing,
   }
 
   if name not in preprocessing_fn_map:
