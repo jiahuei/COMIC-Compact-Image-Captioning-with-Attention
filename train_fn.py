@@ -85,8 +85,7 @@ def train_fn(config):
         print('INFO: Graph constructed. Training begins now.')
         start_epoch = time.time()
         
-        #for step in xrange(start_step, c.max_step):
-        for step in xrange(start_step, 180):
+        for step in xrange(start_step, c.max_step):
             epoch = int(step / num_batches) + 1
             
             # Write summary to disk once every `n_steps_log` steps
