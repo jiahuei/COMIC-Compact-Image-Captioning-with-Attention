@@ -306,7 +306,6 @@ def layer_norm_activate(scope,
                     trainable=True,
                     scope=scope)
     if version.parse(tf.__version__) >= version.parse('1.9'):
-        print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
         outputs = tf.contrib.layers.layer_norm(
                                             inputs=inputs,
                                             begin_norm_axis=begin_norm_axis,

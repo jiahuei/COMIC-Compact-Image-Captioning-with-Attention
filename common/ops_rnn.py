@@ -19,8 +19,8 @@ from tensorflow.contrib.seq2seq.python.ops import attention_wrapper
 from tensorflow.python.layers.core import Dense
 from tensorflow.python.layers import base
 #from tensorflow.python.framework import dtypes
-from ops_v4 import layer_norm_activate, linear, dprint
-from ops_v4 import shape as _shape
+from ops import layer_norm_activate, linear, dprint
+from ops import shape as _shape
 from packaging import version
 AttentionWrapperState = tf.contrib.seq2seq.AttentionWrapperState
 
