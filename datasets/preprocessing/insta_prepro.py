@@ -41,16 +41,19 @@ cap_test1_json_path = pjoin(dset_dir, 'json', 'insta-caption-test1.json')
 json_exists = (os.path.isfile(cap_train_json_path) and
                os.path.isfile(cap_test1_json_path))
 tgz_path = pjoin(dset_dir, 'json.tar.gz')
-skip_dl = json_exists or os.path.isfile(tgz_path)
-if not skip_dl:
-    utils.maybe_download_from_google_drive(
-                        r'0B3xszfcsfVUBdG0tU3BOQWV0a0E',
-                        tgz_path,
-                        file_size=669*1024**2)
-if not json_exists:
+if json_exists:
+    print('INFO: Found exising json files.')
+else:
+    if os.path.isfile(tgz_path):
+        print('INFO: Found file: `json.tar.gz`')
+    else:
+        utils.maybe_download_from_google_drive(
+                            r'0B3xszfcsfVUBdG0tU3BOQWV0a0E',
+                            tgz_path,
+                            file_size=669*1024**2)
     utils.extract_tar_gz(tgz_path)
-if os.path.isfile(tgz_path):
-    os.remove(tgz_path)
+    if os.path.isfile(tgz_path):
+        os.remove(tgz_path)
 
 # For tokenization
 # https://github.com/cesc-park/attend2u/blob/master/scripts/generate_dataset.py
@@ -248,17 +251,17 @@ if os.path.exists(pjoin(dset_dir, 'images')):
 ex = set(ex)
 img_exists = len(ex.intersection(img_all)) == len(img_all)
 tgz_path = pjoin(dset_dir, 'images.tar.gz')
-skip_dl = img_exists or os.path.isfile(tgz_path)
-if not skip_dl:
-    utils.maybe_download_from_google_drive(
-                        r'0B3xszfcsfVUBVkZGU2oxYVl6aDA',
-                        tgz_path,
-                        file_size=20*1024**3)
-if not img_exists:
+if img_exists:
+    print('INFO: Found exising image files.')
+else:
+    if os.path.isfile(tgz_path):
+        print('INFO: Found file: `images.tar.gz`')
+    else:
+        utils.maybe_download_from_google_drive(
+                            r'0B3xszfcsfVUBVkZGU2oxYVl6aDA',
+                            tgz_path,
+                            file_size=20*1024**3)
     utils.extract_tar_gz(tgz_path)
-if os.path.isfile(tgz_path):
-    os.remove(tgz_path)
-
-
-
+    if os.path.isfile(tgz_path):
+        os.remove(tgz_path)
 

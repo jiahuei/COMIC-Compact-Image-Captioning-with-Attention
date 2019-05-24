@@ -33,9 +33,10 @@ dset_dir = pjoin(os.path.split(os.path.dirname(__file__))[0], 'MSCOCO_captions')
 out_path = pjoin(dset_dir, 'captions')
 dset_path = pjoin(dset_dir, 'dataset_coco.json')
 
-
 ### Get the caption JSON files ###
-if not os.path.isfile(dset_path):
+if os.path.isfile(dset_path):
+    print('INFO: Found file: `dataset_coco.json`')
+else:
     zip_path = utils.maybe_download_from_url(
         r'https://cs.stanford.edu/people/karpathy/deepimagesent/caption_datasets.zip',
         dset_dir)
@@ -86,6 +87,8 @@ print('\n')
 ### Output files ###
 
 if output_prefix is not None:
+    if not os.path.exists(out_path):
+        os.makedirs(out_path)
     suffix = []
     suffix.append('w{:d}_s{:d}'.format(word_count_thres, caption_len_thres))
     if include_restval:
@@ -141,19 +144,24 @@ ex = set(ext + exv)
 img_exists = len(ex.intersection(img_all)) == len(img_all)
 
 tzip_path = pjoin(dset_dir, 'train2014.zip')
-skip_dl = img_exists or os.path.isfile(tzip_path)
-if not skip_dl:
-    zip_path = utils.maybe_download_from_url(
-        r'http://images.cocodataset.org/zips/train2014.zip',
-        dset_dir)
+if img_exists:
+    print('INFO: Found exising image files.')
+else:
+    if os.path.isfile(tzip_path):
+        print('INFO: Found file: `train2014.zip`')
+    else:
+        zip_path = utils.maybe_download_from_url(
+            r'http://images.cocodataset.org/zips/train2014.zip',
+            dset_dir)
     utils.extract_zip(zip_path)
     os.remove(zip_path)
-vzip_path = pjoin(dset_dir, 'val2014.zip')
-skip_dl = img_exists or os.path.isfile(vzip_path)
-if not skip_dl:
-    zip_path = utils.maybe_download_from_url(
-        r'http://images.cocodataset.org/zips/val2014.zip',
-        dset_dir)
+    vzip_path = pjoin(dset_dir, 'val2014.zip')
+    if os.path.isfile(vzip_path):
+        print('INFO: Found file: `val2014.zip`')
+    else:
+        zip_path = utils.maybe_download_from_url(
+            r'http://images.cocodataset.org/zips/val2014.zip',
+            dset_dir)
     utils.extract_zip(zip_path)
     os.remove(zip_path)
 
