@@ -115,12 +115,15 @@ def extract_tar_gz(fpath):
     """
     Extracts tar.gz file into the containing directory.
     """
+    def progress(members):
+        with tqdm(total=len(members)) as pbar:
+            for tarinfo in members:
+                yield tarinfo
+                pbar.update()
     tar = tarfile.open(fpath, 'r:gz')
-    for m in tar.getmembers():
-        if m.name.endswith('.ckpt'):
-            break
+    
     opath = os.path.split(fpath)[0]
-    tar.extractall(path=opath, members=[m])   # members=None to extract all
+    tar.extractall(path=opath, members=progress(tar))   # members=None to extract all
     tar.close()
 
 
