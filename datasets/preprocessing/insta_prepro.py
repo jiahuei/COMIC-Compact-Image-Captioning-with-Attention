@@ -31,7 +31,7 @@ pad_value = -1
 wtoi_file = itow_file = None
 
 
-dset_dir = pjoin(os.path.split(os.path.dirname(__file__))[0], 'InstaPIC1M')
+dset_dir = pjoin(os.path.split(os.path.dirname(__file__))[0], 'insta')
 out_path = pjoin(dset_dir, 'captions')
 cap_train_json_path = pjoin(dset_dir, 'json', 'insta-caption-train.json')
 cap_test1_json_path = pjoin(dset_dir, 'json', 'insta-caption-test1.json')
@@ -44,25 +44,21 @@ tgz_path = pjoin(dset_dir, 'json.tar.gz')
 if json_exists:
     print('INFO: Found exising json files.')
 else:
-    if os.path.isfile(tgz_path):
-        print('INFO: Found file: `json.tar.gz`')
-    else:
-        utils.maybe_download_from_google_drive(
+    utils.maybe_download_from_google_drive(
                             r'0B3xszfcsfVUBdG0tU3BOQWV0a0E',
                             tgz_path,
                             file_size=669*1024**2)
     utils.extract_tar_gz(tgz_path)
-    if os.path.isfile(tgz_path):
-        os.remove(tgz_path)
+    os.remove(tgz_path)
 
 # For tokenization
 # https://github.com/cesc-park/attend2u/blob/master/scripts/generate_dataset.py
 try:
-  # UCS-4
-  EMOTICON = re.compile(u'(([\U00002600-\U000027BF])|([\U0001f300-\U0001f64F])|([\U0001f680-\U0001f6FF]))')
+    # UCS-4
+    EMOTICON = re.compile(u'(([\U00002600-\U000027BF])|([\U0001f300-\U0001f64F])|([\U0001f680-\U0001f6FF]))')
 except Exception, e:
-  # UCS-2
-  EMOTICON = re.compile(u'(([\u2600-\u27BF])|([\uD83C][\uDF00-\uDFFF])|([\uD83D][\uDC00-\uDE4F])|([\uD83D][\uDE80-\uDEFF]))')
+    # UCS-2
+    EMOTICON = re.compile(u'(([\u2600-\u27BF])|([\uD83C][\uDF00-\uDFFF])|([\uD83D][\uDC00-\uDE4F])|([\uD83D][\uDE80-\uDEFF]))')
 NOT_EMOTICON = re.compile(r'(\\U([0-9A-Fa-f]){8})|(\\u([0-9A-Fa-f]){4})')
 
 
@@ -254,10 +250,7 @@ tgz_path = pjoin(dset_dir, 'images.tar.gz')
 if img_exists:
     print('INFO: Found exising image files.')
 else:
-    if os.path.isfile(tgz_path):
-        print('INFO: Found file: `images.tar.gz`')
-    else:
-        utils.maybe_download_from_google_drive(
+    utils.maybe_download_from_google_drive(
                             r'0B3xszfcsfVUBVkZGU2oxYVl6aDA',
                             tgz_path,
                             file_size=20*1024**3)

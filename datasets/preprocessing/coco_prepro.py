@@ -29,7 +29,7 @@ pad_value = -1
 wtoi_file = itow_file = None
 
 
-dset_dir = pjoin(os.path.split(os.path.dirname(__file__))[0], 'MSCOCO_captions')
+dset_dir = pjoin(os.path.split(os.path.dirname(__file__))[0], 'mscoco')
 out_path = pjoin(dset_dir, 'captions')
 dset_path = pjoin(dset_dir, 'dataset_coco.json')
 
@@ -143,25 +143,26 @@ if os.path.exists(vpath):
 ex = set(ext + exv)
 img_exists = len(ex.intersection(img_all)) == len(img_all)
 
-tzip_path = pjoin(dset_dir, 'train2014.zip')
 if img_exists:
     print('INFO: Found exising image files.')
 else:
-    if os.path.isfile(tzip_path):
-        print('INFO: Found file: `train2014.zip`')
-    else:
-        zip_path = utils.maybe_download_from_url(
+    zip_path = utils.maybe_download_from_url(
             r'http://images.cocodataset.org/zips/train2014.zip',
             dset_dir)
     utils.extract_zip(zip_path)
     os.remove(zip_path)
-    vzip_path = pjoin(dset_dir, 'val2014.zip')
-    if os.path.isfile(vzip_path):
-        print('INFO: Found file: `val2014.zip`')
-    else:
-        zip_path = utils.maybe_download_from_url(
+    zip_path = utils.maybe_download_from_url(
             r'http://images.cocodataset.org/zips/val2014.zip',
             dset_dir)
     utils.extract_zip(zip_path)
     os.remove(zip_path)
-
+    zip_path = utils.maybe_download_from_url(
+            r'http://images.cocodataset.org/zips/test2014.zip',
+            dset_dir)
+    utils.extract_zip(zip_path)
+    os.remove(zip_path)
+    zip_path = utils.maybe_download_from_url(
+            r'http://images.cocodataset.org/annotations/annotations_trainval2014.zip',
+            dset_dir)
+    utils.extract_zip(zip_path)
+    os.remove(zip_path)

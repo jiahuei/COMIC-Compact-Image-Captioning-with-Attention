@@ -21,7 +21,7 @@ from __future__ import print_function
 import sys, os, math
 import tensorflow as tf
 from tensorflow.python.layers.core import Dense
-sys.path.append(os.path.join(os.path.dirname(__file__), 'common'))
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'common'))
 from natural_sort import natural_keys
 from nets import nets_factory
 import ops

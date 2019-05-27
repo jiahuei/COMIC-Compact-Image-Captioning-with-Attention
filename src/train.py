@@ -14,7 +14,7 @@ from __future__ import print_function
 
 import train_fn as train
 import os, sys, argparse
-sys.path.append(os.path.join(os.path.dirname(__file__), 'common'))
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'common'))
 pjoin = os.path.join
 CURR_DIR = os.path.dirname(__file__)
 
@@ -29,17 +29,17 @@ def create_parser():
         help='The logging name.')
     parser.add_argument(
         '--dataset_dir', type=str,
-        default=pjoin(CURR_DIR, 'datasets', 'MSCOCO_captions'),
+        default=pjoin(CURR_DIR, 'datasets'),
         help='The dataset directory.')
     parser.add_argument(
         '--dataset_file_pattern', type=str,
-        default='coco_{}_w5_s20_include_restval',
-        help='The dataset file pattern, example: `coco_{}_w5_s20`.')
+        default='mscoco_{}_w5_s20_include_restval',
+        help='The dataset text files naming pattern.')
     
     parser.add_argument(
         '--token_type', type=str, default='radix',
         choices=['radix', 'word', 'char'],
-        help='The language model, from `radix`, `word, `char`.')
+        help='The language model.')
     parser.add_argument(
         '--radix_base', type=int, default=256,
         help='The base for Radix models.')
@@ -164,9 +164,11 @@ if __name__ == '__main__':
         rand_seed = 123456789
     
     root = pjoin(CURR_DIR, 'experiments')
-    log_root = pjoin(root, args.dataset_file_pattern.split('_')[0])
+    dataset = args.dataset_file_pattern.split('_')[0]
+    log_root = pjoin(root, dataset)
+    args.dataset_dir = pjoin(args.dataset_dir, dataset)
+    
     name = '_'.join([
-            args.dataset_file_pattern.split('_')[0],
             args.token_type,
             args.attn_alignment_method,
             args.attn_probability_fn,
