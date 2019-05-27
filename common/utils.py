@@ -129,7 +129,10 @@ def extract_zip(fpath):
     Extracts zip file into the containing directory.
     """
     with ZipFile(fpath, 'r') as zip_ref:
-        zip_ref.extractall(os.path.split(fpath)[0])
+        for f in tqdm(iterable=zip_ref.namelist(),
+                      total=len(zip_ref.namelist())):
+            zip_ref.extract(member=f, path=os.path.split(fpath)[0])
+        #zip_ref.extractall(os.path.split(fpath)[0])
 
 
 
