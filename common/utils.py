@@ -115,15 +115,13 @@ def extract_tar_gz(fpath):
     """
     Extracts tar.gz file into the containing directory.
     """
-    def progress(members):
-        with tqdm(total=len(members)) as pbar:
-            for tarinfo in members:
-                yield tarinfo
-                pbar.update()
     tar = tarfile.open(fpath, 'r:gz')
-    
+    members = tar.getmembers()
     opath = os.path.split(fpath)[0]
-    tar.extractall(path=opath, members=progress(tar))   # members=None to extract all
+    for m in tqdm(iterable=members,
+                  total=len(members)):
+        tar.extract(member=m, path=opath)
+    #tar.extractall(path=opath, members=progress(tar))   # members=None to extract all
     tar.close()
 
 
@@ -132,9 +130,9 @@ def extract_zip(fpath):
     Extracts zip file into the containing directory.
     """
     with ZipFile(fpath, 'r') as zip_ref:
-        for f in tqdm(iterable=zip_ref.namelist(),
+        for m in tqdm(iterable=zip_ref.namelist(),
                       total=len(zip_ref.namelist())):
-            zip_ref.extract(member=f, path=os.path.split(fpath)[0])
+            zip_ref.extract(member=m, path=os.path.split(fpath)[0])
         #zip_ref.extractall(os.path.split(fpath)[0])
 
 
