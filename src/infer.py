@@ -26,8 +26,7 @@ def _dprint(string):
 
 def create_parser():
     parser = argparse.ArgumentParser(
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-        description='lol')
+        formatter_class=argparse.RawDescriptionHelpFormatter)
     
     parser.add_argument(
         '--infer_set', type=str, default='test',
@@ -44,11 +43,14 @@ def create_parser():
         '--get_metric_score', type=bool, default=True,
         help='Whether to perform metric score calculations.')
     parser.add_argument(
-        '--save_attention_maps', type=bool, default=True,
+        '--save_attention_maps', type=bool, default=False,
         help='Whether to save attention maps to disk as pickle file.')
     parser.add_argument(
         '--gpu', type=str, default='0',
         help='The gpu number.')
+    parser.add_argument(
+        '--per_process_gpu_memory_fraction', type=float, default=0.75,
+        help='The fraction of GPU memory allocated.')
     
     parser.add_argument(
         '--infer_beam_size', type=int, default=3,
@@ -79,7 +81,6 @@ def create_parser():
 
 if __name__ == '__main__':
     ckpt_prefix = 'model_compact-'
-    tboard_fname = 'run_{}-tag-{}_perplexity.json'
 
     parser = create_parser()
     args = parser.parse_args()
@@ -99,14 +100,11 @@ if __name__ == '__main__':
         if len(args.infer_checkpoints) < 1:
             raise ValueError('`infer_checkpoints` must be either `all` or '
                              'a list of comma-separated checkpoint numbers.')
-    overwrite = True
-    per_process_gpu_memory_fraction = 0.88
     
     ###
     
     c = conf.load_config(pjoin(args.infer_checkpoints_dir, 'config.pkl'))
     c.__dict__.update(args.__dict__)
-    c.per_process_gpu_memory_fraction = per_process_gpu_memory_fraction
     ckpt_dir = c.infer_checkpoints_dir
     
     save_name = 'beam_{}_lpen_{}'.format(

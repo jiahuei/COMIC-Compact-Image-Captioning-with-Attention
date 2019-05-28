@@ -16,7 +16,7 @@ import os, sys, re, time, json
 from tqdm import tqdm
 from model import CaptionModel
 import inputs.manager_image_caption as inputs
-from coco_caption_master_spice import caption_eval
+from coco_caption import caption_eval
 import ops
 pjoin = os.path.join
 

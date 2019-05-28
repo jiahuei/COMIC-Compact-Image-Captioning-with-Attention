@@ -52,7 +52,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
     
     if args.dataset_dir == '':
-        dset_dir = pjoin(os.path.split(os.path.dirname(__file__))[0], 'mscoco')
+        dset_dir = pjoin(os.path.dirname(os.path.dirname(__file__)), 'mscoco')
     else:
         dset_dir = args.dataset_dir
     out_path = pjoin(dset_dir, 'captions')
@@ -68,14 +68,14 @@ if __name__ == '__main__':
         utils.extract_zip(zip_path)
         os.remove(zip_path)
     
-    if os.path.isfile(pjoin(dset_dir, 'annotations', 'captions_val2014.json')):
-        print('INFO: Found file: `captions_val2014.json`')
-    else:
-        zip_path = utils.maybe_download_from_url(
-            r'http://images.cocodataset.org/annotations/annotations_trainval2014.zip',
-            dset_dir)
-        utils.extract_zip(zip_path)
-        os.remove(zip_path)
+    #if os.path.isfile(pjoin(dset_dir, 'annotations', 'captions_val2014.json')):
+    #    print('INFO: Found file: `captions_val2014.json`')
+    #else:
+    #    zip_path = utils.maybe_download_from_url(
+    #        r'http://images.cocodataset.org/annotations/annotations_trainval2014.zip',
+    #        dset_dir)
+    #    utils.extract_zip(zip_path)
+    #    os.remove(zip_path)
     
     ### Read the raw JSON file ###
     

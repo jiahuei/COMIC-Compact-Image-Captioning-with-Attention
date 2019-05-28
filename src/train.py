@@ -164,7 +164,7 @@ if __name__ == '__main__':
     elif args.run == 3:
         rand_seed = 123456789
     
-    root = pjoin(CURR_DIR, 'experiments')
+    root = pjoin(os.path.dirname(CURR_DIR), 'experiments')
     log_root = pjoin(root, args.dataset_file_pattern.split('_')[0])
     
     name = '_'.join([
