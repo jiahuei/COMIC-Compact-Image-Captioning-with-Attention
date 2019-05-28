@@ -15,14 +15,15 @@ from __future__ import print_function
 import train_fn as train
 import os, sys, argparse
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'common'))
+import net_params
+import utils
 pjoin = os.path.join
 CURR_DIR = os.path.dirname(__file__)
 
 
 def create_parser():
     parser = argparse.ArgumentParser(
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-        description='lol')
+        formatter_class=argparse.RawDescriptionHelpFormatter)
     
     parser.add_argument(
         '--name', type=str, default='lstm',
@@ -123,7 +124,7 @@ def create_parser():
         help='Float, determines the epsilon value of ADAM.')
     
     parser.add_argument(
-        '--freeze_scopes', type=str, default=None,
+        '--freeze_scopes', type=str, default='Model/encoder/cnn',
         help='The scopes to freeze / do not train.')
     parser.add_argument(
         '--resume_training', type=bool, default=False,
@@ -132,7 +133,7 @@ def create_parser():
         '--checkpoint_path', type=str, default=None,
         help='The checkpoint path.')
     parser.add_argument(
-        '--checkpoint_exclude_scopes', type=str, default=None,
+        '--checkpoint_exclude_scopes', type=str, default='',
         help='The scopes to exclude when restoring from checkpoint.')
     parser.add_argument(
         '--gpu', type=str, default='0',
@@ -181,7 +182,12 @@ if __name__ == '__main__':
     cnn_ft_log = pjoin(log_root, cnn_ft_log)
     train_fn = train.train_fn
     
-    if os.path.exists(log_path) and not os.path.exists(cnn_ft_log):
+    if not os.path.exists(log_path):
+        # Maybe download weights
+        net = net_params.get_net_params(args.cnn_name)
+        utils.maybe_get_ckpt_file(net)
+        args.checkpoint_path = net.ckpt_path
+    elif os.path.exists(log_path) and not os.path.exists(cnn_ft_log):
         # CNN fine-tune
         args.lr_start = 1e-3
         args.max_epoch = 10

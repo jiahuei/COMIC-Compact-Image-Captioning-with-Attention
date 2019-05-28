@@ -715,7 +715,8 @@ class ModelBase(object):
     def _rnn_dynamic_decoder(self,
                              cell,
                              embedding,
-                             output_layer):
+                             output_layer,
+                             sample=False):
         
         c = self._config
         is_inference = self.mode == 'infer'
@@ -726,6 +727,17 @@ class ModelBase(object):
         if is_inference:
             maximum_iterations = c.infer_max_length
             beam_search = (is_inference and c.infer_beam_size > 1)
+            if sample:
+                return rops.rnn_decoder_search(
+                                        cell,
+                                        embedding,
+                                        output_layer,
+                                        c.batch_size_infer,
+                                        maximum_iterations,
+                                        start_id,
+                                        end_id,
+                                        swap_memory,
+                                        greedy_search=False)
             if beam_search:
                 return rops.rnn_decoder_beam_search(
                                         cell,
@@ -739,7 +751,7 @@ class ModelBase(object):
                                         end_id,
                                         swap_memory)
             else:
-                return rops.rnn_decoder_greedy_search(
+                return rops.rnn_decoder_search(
                                         cell,
                                         embedding,
                                         output_layer,
@@ -747,7 +759,8 @@ class ModelBase(object):
                                         maximum_iterations,
                                         start_id,
                                         end_id,
-                                        swap_memory)
+                                        swap_memory,
+                                        greedy_search=True)
         else:
             return rops.rnn_decoder_training(
                                         cell,

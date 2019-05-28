@@ -58,7 +58,7 @@ def _baseN_arr_to_dec(baseN_array, base):
     return result
 
 
-def _baseN_id_to_caption(ids, config):
+def _radix_id_to_caption(ids, config):
     """Convert base-N word IDs to words / sentence."""
     captions = []
     base = config.base
@@ -101,15 +101,6 @@ def _char_id_to_caption(ids, config):
     return captions
 
 
-def _bpe_id_to_caption(ids, config):
-    """Convert BPE encoded word IDs to words / sentence."""
-    captions = _baseN_id_to_caption(ids, config)
-    captions_processed = []
-    for c in captions:
-        captions_processed.append(c.replace('@@ ', ''))
-    return captions
-
-
 def run_inference(config, curr_ckpt_path):
     """
     Main inference function. Builds and executes the model.
@@ -118,8 +109,8 @@ def run_inference(config, curr_ckpt_path):
     ckpt_dir, ckpt_file = os.path.split(curr_ckpt_path)
     ckpt_num = P_CKPT.findall(ckpt_file)[0]             # Checkpoint number
     
-    if config.token_type == 'baseN':
-        _id_to_caption = _baseN_id_to_caption
+    if config.token_type == 'radix':
+        _id_to_caption = _radix_id_to_caption
     elif config.token_type == 'word':
         _id_to_caption = _word_id_to_caption
     elif config.token_type == 'char':

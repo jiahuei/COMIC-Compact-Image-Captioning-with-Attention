@@ -119,7 +119,8 @@ def extract_tar_gz(fpath):
     members = tar.getmembers()
     opath = os.path.split(fpath)[0]
     for m in tqdm(iterable=members,
-                  total=len(members)):
+                  total=len(members),
+                  desc='Extracting `{}`'.format(os.path.split(fpath)[1])):
         tar.extract(member=m, path=opath)
     #tar.extractall(path=opath, members=progress(tar))   # members=None to extract all
     tar.close()
@@ -130,10 +131,25 @@ def extract_zip(fpath):
     Extracts zip file into the containing directory.
     """
     with ZipFile(fpath, 'r') as zip_ref:
-        for m in tqdm(iterable=zip_ref.namelist(),
-                      total=len(zip_ref.namelist())):
+        for m in tqdm(
+                iterable=zip_ref.namelist(),
+                total=len(zip_ref.namelist()),
+                desc='Extracting `{}`'.format(os.path.split(fpath)[1])):
             zip_ref.extract(member=m, path=os.path.split(fpath)[0])
         #zip_ref.extractall(os.path.split(fpath)[0])
+
+
+def maybe_get_ckpt_file(net_params, remove_tar=True):
+    """
+    Download, extract, remove.
+    """
+    if os.path.isfile(net_params['ckpt_path']):
+        pass
+    else:
+        url = net_params['url']
+        tar_gz_path = maybe_download_from_url(url)
+        extract_tar_gz(tar_gz_path)
+        if remove_tar: os.remove(tar_gz_path)
 
 
 

@@ -34,8 +34,11 @@ def create_parser():
         choices=['test', 'valid', 'coco_test', 'coco_valid'],
         help='The split to perform inference on.')
     parser.add_argument(
+        '--dataset', type=str, default='mscoco',
+        help='The dataset.')
+    parser.add_argument(
         '--dataset_dir', type=str,
-        default=pjoin(CURR_DIR, 'datasets', 'MSCOCO_captions'),
+        default=pjoin(CURR_DIR, 'datasets'),
         help='Dataset directory.')
     parser.add_argument(
         '--run_inference', type=bool, default=True,
@@ -71,8 +74,8 @@ def create_parser():
         help='The checkpoint numbers to be evaluated. Comma-separated.')
     parser.add_argument(
         '--annotations_file', type=str,
-        default='annotations/captions_val2014.json',
-        help='The annotations file. Example: `annotations/captions_val2014.json`')
+        default=pjoin(CURR_DIR, 'datasets', 'mscoco', 'annotations', 'captions_val2014.json'),
+        help='The annotations / reference file for calculating scores.')
     
     return parser
 
@@ -85,6 +88,8 @@ if __name__ == '__main__':
     args = parser.parse_args()
     os.environ['CUDA_DEVICE_ORDER'] = 'PCI_BUS_ID'
     os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu
+    args.dataset_dir = pjoin(args.dataset_dir, args.dataset)
+    
     if args.infer_checkpoints == 'all':
         files = sorted(os.listdir(args.infer_checkpoints_dir), key=nat_key)
         files = [f for f in files if ckpt_prefix in f]
