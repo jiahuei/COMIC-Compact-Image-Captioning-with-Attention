@@ -1,5 +1,8 @@
 # COMIC: Towards a Compact Image Captioning Model with Attention
 This is the code repo for the TMM 2019 paper "COMIC: Towards a Compact Image Captioning Model with Attention".
+
+Please NOTE that this code release is not yet ready.
+
 ```
 @article{tan2019comic,
   title={COMIC: Towards A Compact Image Captioning Model with Attention},
