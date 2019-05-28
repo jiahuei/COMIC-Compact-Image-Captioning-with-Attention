@@ -104,8 +104,7 @@ def create_parser():
     parser = argparse.ArgumentParser(
         formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument(
-        '--dataset_dir', type=str,
-        default=pjoin(os.path.split(os.path.dirname(__file__))[0], 'insta'))
+        '--dataset_dir', type=str, default='')
     parser.add_argument(
         '--output_prefix', type=str, default='insta')
     parser.add_argument(
@@ -128,7 +127,10 @@ if __name__ == '__main__':
     parser = create_parser()
     args = parser.parse_args()
     
-    dset_dir = args.dataset_dir
+    if args.dataset_dir == '':
+        dset_dir = pjoin(os.path.split(os.path.dirname(__file__))[0], 'insta')
+    else:
+        dset_dir = args.dataset_dir
     out_path = pjoin(dset_dir, 'captions')
     cap_train_json_path = pjoin(dset_dir, 'json', 'insta-caption-train.json')
     cap_test1_json_path = pjoin(dset_dir, 'json', 'insta-caption-test1.json')

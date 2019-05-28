@@ -34,11 +34,8 @@ def create_parser():
         choices=['test', 'valid', 'coco_test', 'coco_valid'],
         help='The split to perform inference on.')
     parser.add_argument(
-        '--dataset', type=str, default='mscoco',
-        help='The dataset.')
-    parser.add_argument(
         '--dataset_dir', type=str,
-        default=pjoin(CURR_DIR, 'datasets'),
+        default=pjoin(CURR_DIR, 'datasets', 'mscoco'),
         help='Dataset directory.')
     parser.add_argument(
         '--run_inference', type=bool, default=True,
@@ -88,7 +85,6 @@ if __name__ == '__main__':
     args = parser.parse_args()
     os.environ['CUDA_DEVICE_ORDER'] = 'PCI_BUS_ID'
     os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu
-    args.dataset_dir = pjoin(args.dataset_dir, args.dataset)
     
     if args.infer_checkpoints == 'all':
         files = sorted(os.listdir(args.infer_checkpoints_dir), key=nat_key)

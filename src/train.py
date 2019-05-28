@@ -30,7 +30,7 @@ def create_parser():
         help='The logging name.')
     parser.add_argument(
         '--dataset_dir', type=str,
-        default=pjoin(CURR_DIR, 'datasets'),
+        default=pjoin(CURR_DIR, 'datasets', 'mscoco'),
         help='The dataset directory.')
     parser.add_argument(
         '--dataset_file_pattern', type=str,
@@ -185,7 +185,7 @@ if __name__ == '__main__':
     if not os.path.exists(log_path):
         # Maybe download weights
         net = net_params.get_net_params(args.cnn_name)
-        utils.maybe_get_ckpt_file(net)
+        utils.maybe_get_ckpt_file(net, os.path.split(net.ckpt_path)[0])
         args.checkpoint_path = net.ckpt_path
     elif os.path.exists(log_path) and not os.path.exists(cnn_ft_log):
         # CNN fine-tune
