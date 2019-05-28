@@ -165,9 +165,7 @@ if __name__ == '__main__':
         rand_seed = 123456789
     
     root = pjoin(CURR_DIR, 'experiments')
-    dataset = args.dataset_file_pattern.split('_')[0]
-    log_root = pjoin(root, dataset)
-    args.dataset_dir = pjoin(args.dataset_dir, dataset)
+    log_root = pjoin(root, args.dataset_file_pattern.split('_')[0])
     
     name = '_'.join([
             args.token_type,
@@ -185,8 +183,8 @@ if __name__ == '__main__':
     if not os.path.exists(log_path):
         # Maybe download weights
         net = net_params.get_net_params(args.cnn_name)
-        utils.maybe_get_ckpt_file(net, os.path.split(net.ckpt_path)[0])
-        args.checkpoint_path = net.ckpt_path
+        utils.maybe_get_ckpt_file(net)
+        args.checkpoint_path = net['ckpt_path']
     elif os.path.exists(log_path) and not os.path.exists(cnn_ft_log):
         # CNN fine-tune
         args.lr_start = 1e-3

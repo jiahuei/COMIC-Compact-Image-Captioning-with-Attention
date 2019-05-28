@@ -147,7 +147,8 @@ def maybe_get_ckpt_file(net_params, remove_tar=True):
         pass
     else:
         url = net_params['url']
-        tar_gz_path = maybe_download_from_url(url)
+        tar_gz_path = maybe_download_from_url(
+                        url, os.path.split(net_params['ckpt_path'])[0])
         extract_tar_gz(tar_gz_path)
         if remove_tar: os.remove(tar_gz_path)
 

@@ -56,10 +56,10 @@ if __name__ == '__main__':
     else:
         dset_dir = args.dataset_dir
     out_path = pjoin(dset_dir, 'captions')
-    dset_path = pjoin(dset_dir, 'dataset_coco.json')
+    json_path = pjoin(dset_dir, 'dataset_coco.json')
     
     ### Get the caption JSON files ###
-    if os.path.isfile(dset_path):
+    if os.path.isfile(json_path):
         print('INFO: Found file: `dataset_coco.json`')
     else:
         zip_path = utils.maybe_download_from_url(
@@ -68,15 +68,18 @@ if __name__ == '__main__':
         utils.extract_zip(zip_path)
         os.remove(zip_path)
     
-    zip_path = utils.maybe_download_from_url(
+    if os.path.isfile(pjoin(dset_dir, 'annotations', 'captions_val2014.json')):
+        print('INFO: Found file: `captions_val2014.json`')
+    else:
+        zip_path = utils.maybe_download_from_url(
             r'http://images.cocodataset.org/annotations/annotations_trainval2014.zip',
             dset_dir)
-    utils.extract_zip(zip_path)
-    os.remove(zip_path)
+        utils.extract_zip(zip_path)
+        os.remove(zip_path)
     
     ### Read the raw JSON file ###
     
-    with open(dset_path, 'r') as f:
+    with open(json_path, 'r') as f:
         dataset_coco = json.load(f)
     
     ### Tokenise captions ###
