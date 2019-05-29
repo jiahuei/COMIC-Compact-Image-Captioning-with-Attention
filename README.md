@@ -85,7 +85,7 @@ This code assumes the following dataset directory structures:
 
 ## Differences compared to the paper
 - Added attention map dropout
-- RNN init method changed to `x_{t=-1} = W_I * I_{embed}`
+- RNN init method changed to `x_{t=-1} = W_I * CNN(I)`
 from `h_{t=-1} = W_I tanh (LN (I_{embed} ))`
 - Changed training scheme (learning rate, ADAM epsilon)
 - Possible RNN variational dropout
