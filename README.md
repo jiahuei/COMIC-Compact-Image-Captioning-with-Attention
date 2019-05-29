@@ -90,43 +90,43 @@ from `h_{t=-1} = W_I tanh (LN (I_{embed} ))`
 - Changed training scheme (learning rate, ADAM epsilon)
 - Possible RNN variational dropout
 - Possible context layer
-- SCST [Link](https://arxiv.org/abs/1612.00563) (to be added)
+- [SCST](https://arxiv.org/abs/1612.00563) (to be added)
 
 
 ## Main arguments
 
 ### train.py
-- token_type: Language model. Choices are `radix`, `word`, `char`.
-- radix_base: Base value for Radix models.
-- cnn_name: CNN model name.
-- cnn_input_size: CNN input size.
-- cnn_fm_attention: End point name of feature map for attention.
-- cnn_fm_projection: Feature map projection method. Choices are `none`, `independent`, `tied`.
+- `token_type`: Language model. Choices are `radix`, `word`, `char`.
+- `radix_base`: Base value for Radix models.
+- `cnn_name`: CNN model name.
+- `cnn_input_size`: CNN input size.
+- `cnn_fm_attention`: End point name of feature map for attention.
+- `cnn_fm_projection`: Feature map projection method. Choices are `none`, `independent`, `tied`.
     
-- rnn_name: Type of RNN. Choices are `LSTM`, `LN_LSTM`, `GRU`.
-- rnn_size: Number of RNN units.
-- rnn_word_size: Size of word embedding.
-- rnn_init_method: RNN init method. Choices are `project_hidden`, `first_input`.
-- rnn_recurr_dropout: If True, enable variational recurrent dropout.
+- `rnn_name`: Type of RNN. Choices are `LSTM`, `LN_LSTM`, `GRU`.
+- `rnn_size`: Number of RNN units.
+- `rnn_word_size`: Size of word embedding.
+- `rnn_init_method`: RNN init method. Choices are `project_hidden`, `first_input`.
+- `rnn_recurr_dropout`: If True, enable variational recurrent dropout.
     
-- attn_num_heads: Number of attention heads.
-- attn_context_layer: If True, add linear projection after multi-head attention.
-- attn_alignment_method: Alignment / composition method. Choices are `add`, `dot`.
-- attn_probability_fn: Attention map probability function. Choices are `softmax`, `sigmoid`.
+- `attn_num_heads`: Number of attention heads.
+- `attn_context_layer`: If True, add linear projection after multi-head attention.
+- `attn_alignment_method`: Alignment / composition method. Choices are `add`, `dot`.
+- `attn_probability_fn`: Attention map probability function. Choices are `softmax`, `sigmoid`.
 
 ### infer.py
-- infer_set: The split to perform inference on. Choices are `test`, `valid`, `coco_test`, `coco_valid`.
+- `infer_set`: The split to perform inference on. Choices are `test`, `valid`, `coco_test`, `coco_valid`.
 `coco_test` and `coco_valid` are for inferencing on the whole 
 `test2014` and `val2014` sets respectively. 
 These are used for MS-COCO online server evaluation.
-- infer_checkpoints_dir: Directory containing the checkpoint files.
-- infer_checkpoints: Checkpoint numbers to be evaluated. Comma-separated.
-- annotations_file: Annotations / reference file for calculating scores.
+- `infer_checkpoints_dir`: Directory containing the checkpoint files.
+- `infer_checkpoints`: Checkpoint numbers to be evaluated. Comma-separated.
+- `annotations_file`: Annotations / reference file for calculating scores.
 
-- infer_beam_size: Beam size of beam search. Pass 1 for greedy search.
-- infer_length_penalty_weight: Length penalty weight used in beam search.
-- infer_max_length: Maximum caption length allowed during inference.
-- batch_size_infer: Inference batch size for parallelism.
+- `infer_beam_size`: Beam size of beam search. Pass 1 for greedy search.
+- `infer_length_penalty_weight`: Length penalty weight used in beam search.
+- `infer_max_length`: Maximum caption length allowed during inference.
+- `batch_size_infer`: Inference batch size for parallelism.
 
 
 ## Microsoft COCO Caption Evaluation
