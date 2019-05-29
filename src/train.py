@@ -14,11 +14,11 @@ from __future__ import print_function
 
 import train_fn as train
 import os, sys, argparse
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'common'))
+CURR_DIR = os.path.dirname(os.path.realpath(__file__))
+sys.path.append(os.path.join(CURR_DIR, '..', 'common'))
 import net_params
 import utils
 pjoin = os.path.join
-CURR_DIR = os.path.dirname(__file__)
 
 
 def create_parser():
@@ -29,8 +29,7 @@ def create_parser():
         '--name', type=str, default='lstm',
         help='The logging name.')
     parser.add_argument(
-        '--dataset_dir', type=str,
-        default=pjoin(CURR_DIR, 'datasets', 'mscoco'),
+        '--dataset_dir', type=str, default='',
         help='The dataset directory.')
     parser.add_argument(
         '--dataset_file_pattern', type=str,
@@ -164,11 +163,17 @@ if __name__ == '__main__':
     elif args.run == 3:
         rand_seed = 123456789
     
-    root = pjoin(os.path.dirname(CURR_DIR), 'experiments')
-    log_root = pjoin(root, args.dataset_file_pattern.split('_')[0])
+    dataset = args.dataset_file_pattern.split('_')[0]
+    log_root = pjoin(os.path.dirname(CURR_DIR), 'experiments', dataset)
+    if args.dataset_dir == '':
+        args.dataset_dir = pjoin(CURR_DIR, 'datasets', dataset)
     
+    if args.token_type == 'radix':
+        token = 'radix_b{}'.format(args.radix_base)
+    else:
+        token = args.token_type
     name = '_'.join([
-            args.token_type,
+            token,
             args.attn_alignment_method,
             args.attn_probability_fn,
             'h{}'.format(args.attn_num_heads),

@@ -16,8 +16,16 @@ import os, sys, re, time, json
 from tqdm import tqdm
 from model import CaptionModel
 import inputs.manager_image_caption as inputs
-from coco_caption import caption_eval
+#from coco_caption import caption_eval
 import ops
+
+CURR_DIR = os.path.dirname(os.path.realpath(__file__))
+sys.path.append(os.path.join(CURR_DIR, '..', 'common', 'coco_caption'))
+from pycocotools.coco import COCO
+from pycocoevalcap.eval import COCOEvalCap
+from json import encoder
+
+encoder.FLOAT_REPR = lambda o: format(o, '.3f')
 pjoin = os.path.join
 
 
@@ -28,24 +36,6 @@ _DEBUG = False
 
 def _dprint(string):
     return ops.dprint(string, _DEBUG)
-
-
-def _number_to_baseN(n, base):
-    """Convert any base-10 integer to base-N."""
-    if base < 2:
-        raise ValueError('Base cannot be less than 2.')
-    if n < 0:
-        sign = -1
-        n *= sign
-    elif n == 0:
-        return [0]
-    else:
-        sign = 1
-    digits = []
-    while n:
-        digits.append(sign * int(n % base))
-        n //= base
-    return digits[::-1]
 
 
 def _baseN_arr_to_dec(baseN_array, base):
@@ -61,9 +51,9 @@ def _baseN_arr_to_dec(baseN_array, base):
 def _radix_id_to_caption(ids, config):
     """Convert base-N word IDs to words / sentence."""
     captions = []
-    base = config.base
+    base = config.radix_base
     vocab_size = len(config.itow)
-    word_len = len(_number_to_baseN(vocab_size, base))
+    word_len = len(ops.number_to_base(vocab_size, base))
     for i in range(ids.shape[0]):
         caption = []
         row = [wid for wid in ids[i, :] if wid < base and wid >= 0]
@@ -252,7 +242,8 @@ def evaluate_model(config,
     # Evaluate captions
     print("\nINFO: Evaluation: checkpoint \t {}\n" .format(ckpt_num))
     
-    results = caption_eval.evaluate(c.annotations_file, coco_json)
+    #results = caption_eval.evaluate(c.annotations_file, coco_json)
+    results = evaluate_captions(c.annotations_file, coco_json)
     
     # Compile scores
     metrics = ['Bleu_1', 'Bleu_2', 'Bleu_3', 'Bleu_4',
@@ -324,3 +315,28 @@ def evaluate_model(config,
         json.dump(sorted_cider, f)
     
     return scores_combined
+
+
+def evaluate_captions(annFile, resFile):
+    # create coco object and cocoRes object
+    coco = COCO(pjoin(CURR_DIR, annFile))
+    cocoRes = coco.loadRes(pjoin(CURR_DIR, resFile))
+    
+    # create cocoEval object by taking coco and cocoRes
+    cocoEval = COCOEvalCap(coco, cocoRes)
+    
+    # evaluate on a subset of images
+    # please remove this line when evaluating the full validation set
+    cocoEval.params['image_id'] = cocoRes.getImgIds()
+    
+    # evaluate results
+    cocoEval.evaluate()
+    
+    results = {}
+    for metric, score in cocoEval.eval.items():
+        #print '%s: %.3f' % (metric, score)
+        results[metric] = score
+    results['evalImgs'] = cocoEval.evalImgs
+    return results
+
+

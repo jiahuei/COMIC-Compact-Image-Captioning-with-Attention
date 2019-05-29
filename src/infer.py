@@ -10,13 +10,13 @@ from __future__ import division
 from __future__ import print_function
 
 import os, sys, argparse
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'common'))
+CURR_DIR = os.path.dirname(os.path.realpath(__file__))
+sys.path.append(os.path.join(CURR_DIR, '..', 'common'))
 import infer_fn as infer
 import configuration as conf
 import ops
 from natural_sort import natural_keys as nat_key
 pjoin = os.path.join
-CURR_DIR = os.path.dirname(__file__)
 _DEBUG = False
 
 
@@ -32,6 +32,18 @@ def create_parser():
         '--infer_set', type=str, default='test',
         choices=['test', 'valid', 'coco_test', 'coco_valid'],
         help='The split to perform inference on.')
+    parser.add_argument(
+        '--infer_checkpoints_dir', type=str, required=True,
+        help='The directory containing the checkpoint files.')
+    parser.add_argument(
+        '--infer_checkpoints', type=str, default='all',
+        help='The checkpoint numbers to be evaluated. Comma-separated.')
+    parser.add_argument(
+        '--annotations_file', type=str,
+        default=pjoin(
+            os.path.dirname(CURR_DIR), 'common', 'coco_caption',
+            'annotations', 'captions_val2014.json'),
+        help='The annotations / reference file for calculating scores.')
     parser.add_argument(
         '--dataset_dir', type=str,
         default=pjoin(CURR_DIR, 'datasets', 'mscoco'),
@@ -61,20 +73,9 @@ def create_parser():
     parser.add_argument(
         '--infer_max_length', type=int, default=30,
         help='The maximum caption length allowed during inference.')
-    
     parser.add_argument(
         '--batch_size_infer', type=int, default=25,
         help='The batch size.')
-    parser.add_argument(
-        '--infer_checkpoints_dir', type=str, required=True,
-        help='The directory containing the checkpoint files.')
-    parser.add_argument(
-        '--infer_checkpoints', type=str, default='all',
-        help='The checkpoint numbers to be evaluated. Comma-separated.')
-    parser.add_argument(
-        '--annotations_file', type=str,
-        default=pjoin(CURR_DIR, 'datasets', 'mscoco', 'annotations', 'captions_val2014.json'),
-        help='The annotations / reference file for calculating scores.')
     
     return parser
 

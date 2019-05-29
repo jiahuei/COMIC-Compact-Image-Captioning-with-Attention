@@ -14,7 +14,10 @@ from tqdm import tqdm
 from PIL import Image
 import numpy as np
 import h5py, json
-import os, time, re
+import os, sys, time, re
+CURR_DIR = os.path.dirname(os.path.realpath(__file__))
+sys.path.append(os.path.join(CURR_DIR, '..', '..', 'common'))
+import utils
 
 
 pjoin = os.path.join
@@ -51,6 +54,10 @@ def tokenise(dataset,
     """
     if retokenise:
         print("\nINFO: Tokenising captions using PTB Tokenizer.\n")
+        utils.maybe_download_from_url(
+            r'http://central.maven.org/maven2/edu/stanford/nlp/stanford-corenlp/3.4.1/stanford-corenlp-3.4.1.jar',
+            CURR_DIR)
+        
         tokenizer = PTBTokenizer()
         
         raw_list = []

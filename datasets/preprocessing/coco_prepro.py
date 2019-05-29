@@ -13,7 +13,8 @@ from __future__ import print_function
 
 import os, sys, json, argparse
 import prepro_base as prepro
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', 'common'))
+CURR_DIR = os.path.dirname(os.path.realpath(__file__))
+sys.path.append(os.path.join(CURR_DIR, '..', '..', 'common'))
 import utils
 pjoin = os.path.join
 

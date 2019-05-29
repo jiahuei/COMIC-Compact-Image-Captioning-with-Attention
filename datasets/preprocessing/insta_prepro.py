@@ -15,7 +15,8 @@ import os, sys, copy, argparse
 import json, re, random
 from tqdm import tqdm
 import prepro_base as prepro
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', 'common'))
+CURR_DIR = os.path.dirname(os.path.realpath(__file__))
+sys.path.append(os.path.join(CURR_DIR, '..', '..', 'common'))
 import utils
 pjoin = os.path.join
 

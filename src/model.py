@@ -12,7 +12,8 @@ from __future__ import print_function
 import sys, os
 import tensorflow as tf
 from model_base import ModelBase
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'common'))
+CURR_DIR = os.path.dirname(os.path.realpath(__file__))
+sys.path.append(os.path.join(CURR_DIR, '..', 'common'))
 import ops
 _shape = ops.shape
 

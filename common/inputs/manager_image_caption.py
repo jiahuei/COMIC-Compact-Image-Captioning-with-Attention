@@ -250,7 +250,7 @@ class InputManager_Radix(InputManager):
         c = self.config
         max_word_len = len(ops.number_to_base(len(c.wtoi), c.radix_base))
         self.buckets = [b * max_word_len for b in self.buckets]
-        self.radix_map = {}
+        self.radix_wtoi = {}
         assert c.wtoi['<PAD>'] == -1
         for k in c.wtoi:
             if k == '<GO>':
@@ -260,7 +260,8 @@ class InputManager_Radix(InputManager):
             else:
                 idx = ops.number_to_base(c.wtoi[k], c.radix_base)
                 idx = [0] * (max_word_len - len(idx)) + idx
-            self.radix_map[k] = idx
+            self.radix_wtoi[k] = idx
+        #self.config.radix_wtoi = self.radix_wtoi
     
     
     def _gen(self, data, is_training=True):
@@ -280,7 +281,7 @@ class InputManager_Radix(InputManager):
         while True:
             for d in data:
                 # d[0] is filepath, d[1] is a list of chars / words
-                caption = [self.radix_map.get(w, self.radix_map['<UNK>']) 
+                caption = [self.radix_wtoi.get(w, self.radix_wtoi['<UNK>']) 
                                                     for w in d[1]]
                 caption = np.concatenate(caption)
                 yield (pjoin(c.dataset_dir, d[0]), caption.astype(np.int32))
