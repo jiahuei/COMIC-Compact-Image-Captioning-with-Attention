@@ -15,7 +15,7 @@ This is the code repo for the TMM 2019 paper "COMIC: Towards a Compact Image Cap
 }
 ```
 
-### Requirements ###
+### Requirements ##
 - tensorflow r1.9.0
 - python 2.7
 - java 1.8.0
@@ -24,13 +24,13 @@ This is the code repo for the TMM 2019 paper "COMIC: Towards a Compact Image Cap
 - Pillow >= 3.1.2
 
 
-### Running the code ###
+## Running the code ##
 Assuming you are in the `src` folder:
 
-0. Run `setup.sh` to download the required Stanford models 
+1. Run `setup.sh` to download the required Stanford models 
 and run all the dataset pre-processing scripts.
 
-0. Run the training script `python train.py`. 
+1. Run the training script `python train.py`. 
 Examples are given in `example.sh`.
 
 
@@ -39,7 +39,7 @@ Redownloading can be avoided by:
 - Editing `setup.sh`
 - Providing the path to the directory containing the dataset files
 
-```Shell
+```bash
 python coco_prepro.py --dataset_dir /path/to/coco/dataset
 python insta_prepro.py --dataset_dir /path/to/insta/dataset
 ```
