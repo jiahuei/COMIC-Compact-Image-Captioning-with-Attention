@@ -26,8 +26,10 @@ This is the code repo for the TMM 2019 paper "COMIC: Towards a Compact Image Cap
 
 ### Running the code ###
 Assuming you are in the `src` folder:
+
 0. Run `setup.sh` to download the required Stanford models 
 and run all the dataset pre-processing scripts.
+
 0. Run the training script `python train.py`. 
 Examples are given in `example.sh`.
 
@@ -37,7 +39,7 @@ Redownloading can be avoided by:
 - Editing `setup.sh`
 - Providing the path to the directory containing the dataset files
 
-```bash
+```Shell
 python coco_prepro.py --dataset_dir /path/to/coco/dataset
 python insta_prepro.py --dataset_dir /path/to/insta/dataset
 ```
