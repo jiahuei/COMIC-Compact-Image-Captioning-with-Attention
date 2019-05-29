@@ -33,7 +33,8 @@ def create_parser():
         choices=['test', 'valid', 'coco_test', 'coco_valid'],
         help='The split to perform inference on.')
     parser.add_argument(
-        '--infer_checkpoints_dir', type=str, required=True,
+        '--infer_checkpoints_dir', type=str,
+        default=pjoin('mscoco', 'radix_b256_add_softmax_h8_tie_lstm_run_01'),
         help='The directory containing the checkpoint files.')
     parser.add_argument(
         '--infer_checkpoints', type=str, default='all',
@@ -87,6 +88,8 @@ if __name__ == '__main__':
     args = parser.parse_args()
     os.environ['CUDA_DEVICE_ORDER'] = 'PCI_BUS_ID'
     os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu
+    default_exp_dir = pjoin(os.path.dirname(CURR_DIR), 'experiments')
+    args.infer_checkpoints_dir = pjoin(default_exp_dir, args.infer_checkpoints_dir)
     
     if args.infer_checkpoints == 'all':
         files = sorted(os.listdir(args.infer_checkpoints_dir), key=nat_key)

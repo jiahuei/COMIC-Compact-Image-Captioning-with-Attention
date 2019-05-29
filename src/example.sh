@@ -13,11 +13,11 @@ python train.py  \
 	--gpu '1'  
 
 python infer.py  \
-	--infer_checkpoints_dir '/home/jiahuei/Dropbox/@_PhD/Codes/COMIC/experiments/mscoco/radix_add_softmax_h8_tie_lstm_run_01'  \
+	--infer_checkpoints_dir 'mscoco/radix_add_softmax_h8_tie_lstm_run_01'  \
 	--dataset_dir '/home/jiahuei/Documents/3_Datasets/MSCOCO_captions'
 
 python infer.py  \
-	--infer_checkpoints_dir '/home/jiahuei/Dropbox/@_PhD/Codes/COMIC/experiments/mscoco/word_add_softmax_h8_tie_lstm_run_01'  \
+	--infer_checkpoints_dir 'mscoco/word_add_softmax_h8_tie_lstm_run_01'  \
 	--dataset_dir '/home/jiahuei/Documents/3_Datasets/MSCOCO_captions'   \
 	--gpu '1'
 

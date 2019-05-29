@@ -74,7 +74,7 @@ def create_parser():
     parser.add_argument(
         '--rnn_init_method', type=str, default='first_input',
         choices=['project_hidden', 'first_input'],
-        help='The type of RNN, from `LSTM`, `LN_LSTM` and `GRU`.')
+        help='The RNN init method.')
     parser.add_argument(
         '--rnn_recurr_dropout', type=bool, default=False,
         help='Whether to enable variational recurrent dropout.')
