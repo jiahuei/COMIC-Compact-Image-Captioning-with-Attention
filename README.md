@@ -88,20 +88,21 @@ This code assumes the following dataset directory structures:
 
 ## Differences compared to the paper
 To match the settings as described in the paper, 
-set the `legacy` argument of `train.py` to `True` (the default is `False`).
+set the `legacy` argument of `train.py` to `True` (the default is `False`). 
+This will override some of the provided arguments.
 
 When using default arguments, the differences are:
-- Attention map dropout set to 0.1
+- Attention map dropout set to `0.1`
 - RNN init method changed to `x_{t=-1} = W_I * CNN(I)`
 from `h_{t=-1} = W_I tanh (LN (I_{embed} ))`
 - Changed training scheme (learning rate, ADAM epsilon)
 - CNN fine-tuning during first repeat run
 
 Changes that can be enabled:
-- Possible RNN variational dropout 
+- RNN variational dropout 
 [[arxiv]](https://arxiv.org/abs/1512.05287)
 [[tf]](https://www.tensorflow.org/versions/r1.9/api_docs/python/tf/contrib/rnn/DropoutWrapper#methods)
-- Possible context layer
+- Context layer (linear projection after attention)
 - SCST [[arxiv]](https://arxiv.org/abs/1612.00563) (to be added)
 
 

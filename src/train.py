@@ -163,13 +163,12 @@ if __name__ == '__main__':
         args.__dict__[k] = [int(v) for v in args.__dict__[k].split(',')]
     
     if args.legacy:
+        print('LEGACY mode enabled. Some arguments will be overridden.')
         args.rnn_init_method = 'project_hidden'
         args.attn_keep_prob = 1.0
         args.lr_start = 1e-3
         args.lr_end = 2e-4
         args.adam_epsilon = 1e-6
-    
-    
     
     if args.run == 1:
         rand_seed = 48964896
