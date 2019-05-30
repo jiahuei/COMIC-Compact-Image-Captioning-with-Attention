@@ -496,6 +496,7 @@ class ModelBase(object):
                 if exc_scopes == None and model_vars == ckpt_vars:
                     # Restore whole model (resume training)
                     saver.restore(session, checkpoint_path)
+                    lr = None
                 else:
                     # Restore whole model (fine-tune)
                     var_list = tf.get_collection(

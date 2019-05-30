@@ -179,17 +179,17 @@ def try_to_train(train_fn, try_block=True, overwrite=False, **kargs):
     """Wrapper for the main training function."""
     config = conf.Config(**kargs)
     config.overwrite_safety_check(overwrite)
-    if config.resume_training:
-        print('INFO: Resuming training from checkpoint.')
-        fp = os.path.join(config.log_path, 'config.pkl')
-        config = conf.load_config(fp)
-        config.lr_start = None
-        config.resume_training = True
-        config.checkpoint_path = kargs.pop('log_path')
-        config.lr_end = kargs.pop('lr_end')
-        config.max_epoch = kargs.pop('max_epoch')
-    else:
-        config.save_config_to_file()
+    #if config.resume_training:
+    #    print('INFO: Resuming training from checkpoint.')
+    #    fp = os.path.join(config.log_path, 'config.pkl')
+    #    config = conf.load_config(fp)
+    #    config.resume_training = True
+    #    config.checkpoint_path = kargs.pop('log_path')
+    #    config.lr_end = kargs.pop('lr_end')
+    #    config.max_epoch = kargs.pop('max_epoch')
+    #else:
+    #    config.save_config_to_file()
+    config.save_config_to_file()
     if try_block:
         try:
             train_fn(config)
@@ -205,10 +205,9 @@ def try_to_train(train_fn, try_block=True, overwrite=False, **kargs):
             err_msg += '\r\n\r\nTraceback stack:\r\n\r\n'
             for entry in traceback_extract:        
                 err_msg += '%s\r\n' % str(entry)
-            #with open(config.log_path + '/error_log.txt', 'w') as f:
-            #    f.write(err_msg)
-            with open('/home/jiahuei/Documents/1_TF_files/caption_baseN/mscoco_v8/error_log.txt', 'w') as f:
-                f.write('{}\r\n\r\n'.format(config.log_path))
+            name = 'error__' + os.path.split(config.log_path)[0] + '.txt'
+            with open(os.path.join(os.path.dirname(config.log_path), name), 'w') as f:
+                f.write(err_msg)
             print('\nWARNING: An error has occurred.\n')
             print(err_msg)
             #tf.reset_default_graph()

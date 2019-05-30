@@ -131,9 +131,9 @@ def create_parser():
     parser.add_argument(
         '--freeze_scopes', type=str, default='Model/encoder/cnn',
         help='The scopes to freeze / do not train.')
-    parser.add_argument(
-        '--resume_training', type=bool, default=False,
-        help='Boolean, whether to resume training from checkpoint. Pass '' for False.')
+    #parser.add_argument(
+    #    '--resume_training', type=bool, default=False,
+    #    help='Boolean, whether to resume training from checkpoint. Pass '' for False.')
     parser.add_argument(
         '--checkpoint_path', type=str, default=None,
         help='The checkpoint path.')
@@ -204,9 +204,10 @@ if __name__ == '__main__':
         net = net_params.get_net_params(args.cnn_name)
         utils.maybe_get_ckpt_file(net)
         args.checkpoint_path = net['ckpt_path']
-    elif os.path.exists(log_path) and not os.path.exists(cnn_ft_log):
-        if args.legacy: raise NotImplementedError
+    
+    elif not os.path.exists(cnn_ft_log):
         # CNN fine-tune
+        if args.legacy: raise NotImplementedError
         args.lr_start = 1e-3
         args.max_epoch = 10
         args.freeze_scopes = ''

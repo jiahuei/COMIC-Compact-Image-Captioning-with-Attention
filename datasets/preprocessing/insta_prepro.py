@@ -254,7 +254,7 @@ if __name__ == '__main__':
                 continue
             test_ann['images'].append({'id': d['image_id']})
             test_ann['annotations'].append(
-                    {'caption': d['raw'][0].replace('_UNK', '<UNK>'),
+                    {'caption': d['raw'][0],
                      'id': 0,
                      'image_id': d['image_id']})
         
@@ -271,8 +271,6 @@ if __name__ == '__main__':
         for d in tokenised_insta_copy:
             if d['split'] not in ['test', 'val']:
                 continue
-            if 'UNK' in ' '.join(d['tokens'][0]):
-                print('lalalala')
             test_ann['images'].append({'id': d['image_id']})
             test_ann['annotations'].append(
                     {'caption': ' '.join(d['tokens'][0]),
