@@ -130,6 +130,10 @@ def train_fn(config):
                 _run_eval_loop(sess, c, m_valid, summary_writer, global_step)
             
             if (step +1) % num_batches == 0:
+                if c.legacy:
+                    lr = _lr_reduce_check(config, epoch, lr)
+                    m_train.update_lr(sess, lr)
+                    sess.run(m_train.lr)
                 t = time.time() - start_epoch
                 print('\n\n>>> Epoch {:3d} complete'.format(epoch))
                 print('>>> Time taken: {:10.2f} minutes\n\n'.format(t / 60))
@@ -138,6 +142,16 @@ def train_fn(config):
         
         sess.close()
         print('\n\nINFO: Training completed.')
+
+
+def _lr_reduce_check(config, epoch, learning_rate):
+    """ Helper to reduce learning rate every n epochs."""
+    if (learning_rate > config.lr_end 
+        and epoch % config.reduce_lr_every_n_epochs == 0):
+        learning_rate /= 2
+        if learning_rate < config.lr_end:
+            learning_rate = config.lr_end
+    return learning_rate
 
 
 def _run_eval_loop(session, c, m, summary_writer, global_step):
@@ -171,7 +185,7 @@ def try_to_train(train_fn, try_block=True, overwrite=False, **kargs):
         config = conf.load_config(fp)
         config.lr_start = None
         config.resume_training = True
-        config.checkpoint_path = kargs.pop('data_paths')['log_path']
+        config.checkpoint_path = kargs.pop('log_path')
         config.lr_end = kargs.pop('lr_end')
         config.max_epoch = kargs.pop('max_epoch')
     else:

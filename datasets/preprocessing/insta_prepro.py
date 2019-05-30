@@ -240,7 +240,9 @@ if __name__ == '__main__':
                       (out_path, args.output_prefix, suffix), 'w') as f:
                 json.dump(itow, f)
         
-        # Generate COCO style annotation file
+        base_dir = os.path.dirname(os.path.dirname(CURR_DIR))
+        coco_annot_dir = pjoin(base_dir, 'common', 'coco_caption', 'annotations')
+        # Generate COCO style annotation file (raw)
         test_ann = dict(images=[],
                         info='',
                         type='captions',
@@ -256,7 +258,28 @@ if __name__ == '__main__':
                      'id': 0,
                      'image_id': d['image_id']})
         
-        with open(pjoin(out_path, 'captions_insta_test1.json'), 'w') as f:
+        with open(pjoin(coco_annot_dir, 'insta_testval_raw.json'), 'w') as f:
+            json.dump(test_ann, f)
+        
+        # Generate COCO style annotation file (without emojis)
+        test_ann = dict(images=[],
+                        info='',
+                        type='captions',
+                        annotations=[],
+                        licenses='')
+        
+        for d in tokenised_insta_copy:
+            if d['split'] not in ['test', 'val']:
+                continue
+            if 'UNK' in ' '.join(d['tokens'][0]):
+                print('lalalala')
+            test_ann['images'].append({'id': d['image_id']})
+            test_ann['annotations'].append(
+                    {'caption': ' '.join(d['tokens'][0]),
+                     'id': 0,
+                     'image_id': d['image_id']})
+        
+        with open(pjoin(coco_annot_dir, 'insta_testval_clean.json'), 'w') as f:
             json.dump(test_ann, f)
         
         print('INFO: Saved output text files.\n')

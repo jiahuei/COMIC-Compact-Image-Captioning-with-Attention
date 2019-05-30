@@ -37,6 +37,9 @@ def create_parser():
         help='The dataset text files naming pattern.')
     
     parser.add_argument(
+        '--legacy', type=bool, default=False,
+        help='If True, will match settings as described in paper.')
+    parser.add_argument(
         '--token_type', type=str, default='radix',
         choices=['radix', 'word', 'char'],
         help='The language model.')
@@ -93,6 +96,9 @@ def create_parser():
         '--attn_probability_fn', type=str, default='softmax',
         choices=['softmax', 'sigmoid'],
         help='Str, The attention map probability function.')
+    parser.add_argument(
+        '--attn_keep_prob', type=float, default=0.9,
+        help='Float, The keep rate for attention map dropout.')
     
     parser.add_argument(
         '--initialiser', type=str, default='xavier',
@@ -156,6 +162,15 @@ if __name__ == '__main__':
     for k in ['cnn_input_size']:
         args.__dict__[k] = [int(v) for v in args.__dict__[k].split(',')]
     
+    if args.legacy:
+        args.rnn_init_method = 'project_hidden'
+        args.attn_keep_prob = 1.0
+        args.lr_start = 1e-3
+        args.lr_end = 2e-4
+        args.adam_epsilon = 1e-6
+    
+    
+    
     if args.run == 1:
         rand_seed = 48964896
     elif args.run == 2:
@@ -191,6 +206,7 @@ if __name__ == '__main__':
         utils.maybe_get_ckpt_file(net)
         args.checkpoint_path = net['ckpt_path']
     elif os.path.exists(log_path) and not os.path.exists(cnn_ft_log):
+        if args.legacy: raise NotImplementedError
         # CNN fine-tune
         args.lr_start = 1e-3
         args.max_epoch = 10
@@ -199,6 +215,7 @@ if __name__ == '__main__':
         log_path = pjoin(log_root, cnn_ft_log)
     
     elif os.path.exists(cnn_ft_log):
+        if args.legacy: raise NotImplementedError
         # SCST fine-tune (after CNN fine-tune)
         raise ValueError('Not ready')
         log_path = pjoin(log_root, log_name)

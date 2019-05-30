@@ -47,8 +47,11 @@ class CaptionModel(ModelBase):
                          initializer=self._get_initialiser())
         
         if self.is_training():
-            self._create_lr_gstep()
-            self.lr = self._get_lr(c.max_step)
+            self._create_gstep()
+            if c.legacy:
+                self._create_lr()
+            else:
+                self._create_cosine_lr(c.max_step)
         
         with tf.variable_scope('Model', **vs_kwargs):
             self._process_inputs()
@@ -109,9 +112,8 @@ class CaptionModel_SCST(ModelBase):
                          initializer=self._get_initialiser())
         
         if self.is_training():
-            self._create_lr_gstep()
-            self._get_lr(c.max_step)
-            tf.summary.scalar('learning_rate', self.lr)
+            self._create_gstep()
+            self._create_cosine_lr(c.max_step)
         
         with tf.variable_scope('Model', **vs_kwargs):
             self._process_inputs()

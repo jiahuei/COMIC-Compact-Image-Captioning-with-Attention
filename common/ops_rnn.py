@@ -30,9 +30,7 @@ def _dprint(string):
     return dprint(string, _DEBUG)
 
 
-def _layer_norm_act(scope,
-                    tensor,
-                    activation_fn=None):
+def _layer_norm_tanh(tensor):
     if version.parse(tf.__version__) >= version.parse('1.9'):
         tensor = layer_norm_activate(
                                 'LN_tanh',
@@ -397,7 +395,7 @@ class BahdanauAttentionV1(attention_wrapper._BaseAttentionMechanism):
                                 [self._num_units],
                                 dtype=query_emb.dtype)
             score = self._keys + query_emb
-            score = _layer_norm_act('LN_tanh', score, tf.nn.tanh)
+            score = _layer_norm_tanh(score)
             score = tf.reduce_sum(v * score, [-1])
             if self._score_scale:
                 eps = 1e-5
@@ -578,7 +576,7 @@ class MultiHeadAddLN(MultiHeadAttV3):
             v = tf.get_variable(
               'attention_v', [self._num_units], dtype=proj_query.dtype)
             score = self._keys + proj_query
-            score = _layer_norm_act('LN_tanh', score, tf.nn.tanh)
+            score = _layer_norm_tanh(score)
             score *= v
             score = split_heads(score, self._num_heads)             # (batch_size, num_heads, mem_size, num_units / num_heads)
             score = tf.reduce_sum(score, axis=3)                    # (batch_size, num_heads, mem_size)
@@ -1035,9 +1033,7 @@ class AttentionDeepOutputWrapperV3(attention_wrapper.AttentionWrapper):
                                      activation_fn=None)
                 inputs = tf.reshape(inputs, [-1, inputs_shape[1]])
                 cell_output = cell_output + inputs
-                cell_output = _layer_norm_act('output_projection',
-                                              cell_output,
-                                              tf.nn.tanh)
+                cell_output = _layer_norm_tanh(cell_output)
         return cell_output, curr_state
     
     
@@ -1167,7 +1163,7 @@ class MultiLevelAttentionSwitchV1(attention_wrapper._BaseAttentionMechanism):
             contexts_emb = self.memory_layer(contexts)
             score = contexts_emb + query_emb
             
-            score = _layer_norm_act('LN_tanh', score, tf.nn.tanh)
+            score = _layer_norm_tanh(score)
             score = tf.reduce_sum(v * score, [-1])
             
             if self._score_scale:
@@ -1307,7 +1303,7 @@ class BahdanauMultiLevelAttentionV1(attention_wrapper._BaseAttentionMechanism):
                                     [self._num_units],
                                     dtype=query_emb.dtype)
                 score = self._keys + query_emb
-                score = _layer_norm_act('LN_tanh', score, tf.nn.tanh)
+                score = _layer_norm_tanh(score)
                 score = tf.reduce_sum(v * score, [-1])
                 #scaling_init = 5.0
                 if self._score_scale:

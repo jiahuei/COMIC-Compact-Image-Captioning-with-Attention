@@ -2,6 +2,8 @@ COMIC: Towards a Compact Image Captioning Model with Attention
 ===================
 
 This is the code repo for the TMM 2019 paper "COMIC: Towards a Compact Image Captioning Model with Attention".
+[[arxiv]](https://arxiv.org/abs/1903.01072) 
+[[IEEE]](https://ieeexplore.ieee.org/abstract/document/8666805) 
 
 **Please NOTE that this code is NOT yet ready.**
 
@@ -16,12 +18,13 @@ This is the code repo for the TMM 2019 paper "COMIC: Towards a Compact Image Cap
 ```
 
 ## Requirements
-- tensorflow r1.9.0
+- tensorflow 1.9.0
 - python 2.7
 - java 1.8.0
 - tqdm >= 4.24.0
-- requests >= 2.18.4
 - Pillow >= 3.1.2
+- packaging >= 19.0
+- requests >= 2.18.4
 
 
 ## Running the code
@@ -40,8 +43,8 @@ Examples are given in `example.sh`.
 
 ## Avoid redownloading datasets
 Redownloading can be avoided by:
-- Editing `setup.sh`
-- Providing the path to the directory containing the dataset files
+1. Editing `setup.sh`
+1. Providing the path to the directory containing the dataset files
 
 ```bash
 python coco_prepro.py --dataset_dir /path/to/coco/dataset
@@ -84,18 +87,28 @@ This code assumes the following dataset directory structures:
 
 
 ## Differences compared to the paper
-- Added attention map dropout
+To match the settings as described in the paper, 
+set the `legacy` argument of `train.py` to `True` (the default is `False`).
+
+When using default arguments, the differences are:
+- Attention map dropout set to 0.1
 - RNN init method changed to `x_{t=-1} = W_I * CNN(I)`
 from `h_{t=-1} = W_I tanh (LN (I_{embed} ))`
 - Changed training scheme (learning rate, ADAM epsilon)
-- Possible RNN variational dropout
+- CNN fine-tuning during first repeat run
+
+Changes that can be enabled:
+- Possible RNN variational dropout 
+[[arxiv]](https://arxiv.org/abs/1512.05287)
+[[tf]](https://www.tensorflow.org/versions/r1.9/api_docs/python/tf/contrib/rnn/DropoutWrapper#methods)
 - Possible context layer
-- [SCST](https://arxiv.org/abs/1612.00563) (to be added)
+- SCST [[arxiv]](https://arxiv.org/abs/1612.00563) (to be added)
 
 
 ## Main arguments
 
 ### train.py
+- `legacy`: If `True`, will match settings as described in paper.
 - `token_type`: Language model. Choices are `radix`, `word`, `char`.
 - `radix_base`: Base value for Radix models.
 - `cnn_name`: CNN model name.
@@ -107,10 +120,10 @@ from `h_{t=-1} = W_I tanh (LN (I_{embed} ))`
 - `rnn_size`: Number of RNN units.
 - `rnn_word_size`: Size of word embedding.
 - `rnn_init_method`: RNN init method. Choices are `project_hidden`, `first_input`.
-- `rnn_recurr_dropout`: If True, enable variational recurrent dropout.
+- `rnn_recurr_dropout`: If `True`, enable variational recurrent dropout.
     
 - `attn_num_heads`: Number of attention heads.
-- `attn_context_layer`: If True, add linear projection after multi-head attention.
+- `attn_context_layer`: If `True`, add linear projection after multi-head attention.
 - `attn_alignment_method`: Alignment / composition method. Choices are `add`, `dot`.
 - `attn_probability_fn`: Attention map probability function. Choices are `softmax`, `sigmoid`.
 
@@ -123,7 +136,7 @@ These are used for MS-COCO online server evaluation.
 - `infer_checkpoints`: Checkpoint numbers to be evaluated. Comma-separated.
 - `annotations_file`: Annotations / reference file for calculating scores.
 
-- `infer_beam_size`: Beam size of beam search. Pass 1 for greedy search.
+- `infer_beam_size`: Beam size of beam search. Pass `1` for greedy search.
 - `infer_length_penalty_weight`: Length penalty weight used in beam search.
 - `infer_max_length`: Maximum caption length allowed during inference.
 - `batch_size_infer`: Inference batch size for parallelism.
@@ -131,8 +144,14 @@ These are used for MS-COCO online server evaluation.
 
 ## Microsoft COCO Caption Evaluation
 This code uses the standard `coco-caption` code with *SPICE* metric.
+[[Link to repo]](https://github.com/tylin/coco-caption/tree/3a9afb2682141a03e1cdc02b0df6770d2c884f6f)
 
-[Link to repo](https://github.com/tylin/coco-caption/tree/3a9afb2682141a03e1cdc02b0df6770d2c884f6f)
+
+To perform online server evaluation:
+1. Infer on `coco_test` (test2014), rename the JSON output file to `captions_test2014__results.json`.
+1. Infer on `coco_valid` (val2014), rename the JSON output file to `captions_val2014__results.json`.
+1. Zip the files and submit.
+
 
 
 

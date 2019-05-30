@@ -86,6 +86,24 @@ class ModelBase(object):
                             is_training=False)
             net, end_points = cnn_fn(self._enc_inputs)
         
+        # Produce image embeddings
+        if c.legacy:
+            net = ops.layer_norm_activate(
+                            scope='LN_tanh',
+                            inputs=tf.squeeze(net, axis=[1, 2]),
+                            activation_fn=tf.nn.tanh,
+                            begin_norm_axis=1)
+            self.im_embed = ops.linear(
+                                scope='im_embed',
+                                inputs=net,
+                                output_dim=1024,
+                                bias_init=None,
+                                activation_fn=None)
+        else:
+            self.im_embed = tf.squeeze(net, axis=[1, 2])
+        
+        _dprint('{}: `self.im_embed` shape: {}'.format(
+                self.__class__.__name__, _shape(self.im_embed)))
         if _DEBUG:
             _fname = pjoin(c.log_path, '{}_end_points.txt'.format(c.cnn_name))
             mssg = ''
@@ -93,11 +111,6 @@ class ModelBase(object):
                 mssg += '{}\r\n{}\r\n\r\n'.format(k, _shape(end_points[k]))
             with open(_fname, 'w') as f:
                 f.write(mssg)
-        
-        # Produce image embeddings
-        self.im_embed = tf.squeeze(net, axis=[1, 2])
-        _dprint('{}: `self.im_embed` shape: {}'.format(
-                self.__class__.__name__, _shape(self.im_embed)))
         
         # Feature maps
         cnn_fm = end_points[c.cnn_fm_attention]
@@ -130,7 +143,7 @@ class ModelBase(object):
         align = c.attn_alignment_method
         prob = c.attn_probability_fn
         rnn_size = c.rnn_size
-        att_keep_prob = 0.9 if self.is_training() else 1.0
+        att_keep_prob = c.attn_keep_prob if self.is_training() else 1.0
         batch_size = _shape(im_embed)[0]
         is_inference = self.mode == 'infer'
         beam_search = (is_inference and c.infer_beam_size > 1)
@@ -218,7 +231,7 @@ class ModelBase(object):
         align = c.attn_alignment_method
         prob = c.attn_probability_fn
         rnn_size = c.rnn_size
-        att_keep_prob = 0.9 if self.is_training() else 1.0
+        att_keep_prob = c.attn_keep_prob if self.is_training() else 1.0
         batch_size = _shape(im_embed)[0]
         
         sample = False
@@ -686,7 +699,7 @@ class ModelBase(object):
                                     bias_init=None,
                                     activation_fn=None)
                 initial_state = tf.contrib.rnn.LSTMStateTuple(
-                                        init_state_h * 0.0, init_state_h)
+                                    tf.zeros_like(init_state_h), init_state_h)
             elif rnn == 'GRU':
                 initial_state = ops.linear(
                                     scope='rnn_initial_state',
@@ -771,34 +784,6 @@ class ModelBase(object):
                                         self._dec_sent_lens,
                                         swap_memory)
     
-    ########
-    # Misc #
-    
-    def _pre_act_linear(self,
-                        scope,
-                        inputs,
-                        output_dim,
-                        act_fn=None):
-        """
-        Helper to perform layer norm, activation, followed by linear map.
-        
-        Args:
-            scope: name or scope.
-            inputs: A 2-D tensor.
-            output_dim: The output dimension (second dimension).
-            act_fn: Activation function to be used. (Optional)
-    
-        Returns:
-            A tensor of shape [inputs_dim[0], `output_dim`].
-        """
-        with tf.variable_scope(scope):
-            inputs = ops.layer_norm_activate('pre_act_LN', inputs, act_fn)
-            return ops.linear(scope='linear',
-                              inputs=inputs,
-                              output_dim=output_dim,
-                              bias_init=None,
-                              activation_fn=None)
-    
     ########################
     ### Training helpers ###
     
@@ -815,9 +800,9 @@ class ModelBase(object):
         return session.run(self.global_step)
     
     
-    def _create_lr_gstep(self):
+    def _create_gstep(self):
         """
-        Helper to create learning rate and global step variables.
+        Helper to create global step variable.
         """
         #with tf.variable_scope('misc'):
         self.global_step = tf.get_variable(
@@ -828,6 +813,15 @@ class ModelBase(object):
                                 trainable=False,
                                 collections=[tf.GraphKeys.GLOBAL_VARIABLES,
                                              tf.GraphKeys.GLOBAL_STEP])
+        self._new_step = tf.placeholder(tf.int32, None, 'new_global_step')
+        self._assign_step = tf.assign(self.global_step, self._new_step)
+    
+    
+    def _create_lr(self):
+        """
+        Helper to create learning rate variable.
+        """
+        #with tf.variable_scope('misc'):
         self.lr = tf.get_variable(
                                 'learning_rate',
                                 shape=[],
@@ -835,25 +829,23 @@ class ModelBase(object):
                                 initializer=tf.zeros_initializer(),
                                 trainable=False,
                                 collections=[tf.GraphKeys.GLOBAL_VARIABLES])
-        tf.summary.scalar('learning_rate', self.lr)
-        
-        self._new_step = tf.placeholder(tf.int32, None, 'new_global_step')
         self._new_lr = tf.placeholder(tf.float32, None, 'new_lr')
-        self._assign_step = tf.assign(self.global_step, self._new_step)
         self._assign_lr = tf.assign(self.lr, self._new_lr)
+        tf.summary.scalar('learning_rate', self.lr)
     
     
-    def _get_lr(self, max_step):
+    def _create_cosine_lr(self, max_step):
+        """
+        Helper to anneal learning rate following a cosine curve.
+        """
         c = self._config
+        self._create_lr()
         with tf.variable_scope('learning_rate'):
-#            if c.lr_end == 0.0:
-#                step = tf.to_float(self.global_step / max_step)
-#            else:
-#                step = tf.to_float(self.global_step / max_step / 0.95)
             step = tf.to_float(self.global_step / max_step)
             step = 1.0 + tf.cos(tf.minimum(1.0, step) * math.pi)
             lr = (c.lr_start - c.lr_end) * step / 2 + c.lr_end
-        return lr
+        self.lr = lr
+        tf.summary.scalar('learning_rate', self.lr)
     
     
     def _get_initialiser(self):

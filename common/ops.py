@@ -312,6 +312,7 @@ def layer_norm_activate(scope,
                                             begin_params_axis=-1,
                                             **ln_kwargs)
     else:
+        print('WARNING: `layer_norm_activate`: `begin_norm_axis` is ignored.')
         outputs = tf.contrib.layers.layer_norm(
                                             inputs=inputs,
                                             **ln_kwargs)
