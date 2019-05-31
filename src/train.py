@@ -193,6 +193,8 @@ if __name__ == '__main__':
             args.cnn_fm_projection[:3],
             args.name,
             ])
+    if args.legacy:
+        name = 'legacy_' + name
     
     dec_dir = pjoin(log_root, '{}_run_{:02d}'.format(name, args.run))
     cnnft_dir = pjoin(log_root, '{}_cnnFT_run_{:02d}'.format(name, args.run))
