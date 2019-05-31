@@ -157,8 +157,6 @@ if __name__ == '__main__':
     
     os.environ['CUDA_DEVICE_ORDER'] = 'PCI_BUS_ID'
     os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu
-    #overwrite = args.resume_training
-    overwrite = True
     
     for k in ['cnn_input_size']:
         args.__dict__[k] = [int(v) for v in args.__dict__[k].split(',')]
@@ -196,31 +194,35 @@ if __name__ == '__main__':
             args.name,
             ])
     
+    dec_dir = pjoin(log_root, '{}_run_{:02d}'.format(name, args.run))
+    cnnft_dir = pjoin(log_root, '{}_cnnFT_run_{:02d}'.format(name, args.run))
+    scst_dir= pjoin(log_root, '{}_cnnFT_SCST_run_{:02d}'.format(name, args.run))
     train_fn = train.train_fn
+    
     if args.train_mode == 'decoder':
-        log_path = '{}_run_{:02d}'.format(name, args.run)
         # Maybe download weights
         net = net_params.get_net_params(args.cnn_name)
         utils.maybe_get_ckpt_file(net)
         args.checkpoint_path = net['ckpt_path']
+        log_path = dec_dir
     
     elif args.train_mode == 'cnn_finetune':
         # CNN fine-tune
         if args.legacy: raise NotImplementedError
-        log_path = '{}_cnnFT_run_{:02d}'.format(name, args.run)
         args.lr_start = 1e-3
         args.max_epoch = 10
         args.freeze_scopes = ''
-        args.checkpoint_path = log_path
+        args.checkpoint_path = dec_dir
+        log_path = cnnft_dir
     
     elif args.train_mode == 'scst':
         # SCST fine-tune (after CNN fine-tune)
         if args.legacy: raise NotImplementedError
-        log_path = '{}_cnnFT_SCST_run_{:02d}'.format(name, args.run)
+        args.checkpoint_path = cnnft_dir
+        log_path = scst_dir
         train_fn = train.train_fn_scst
     
-    log_path = pjoin(log_root, log_path)
-    args.resume_training = os.path.exists(log_path)
+    args.resume_training = overwrite = os.path.exists(log_path)
     
     ###
     
@@ -262,87 +264,5 @@ if __name__ == '__main__':
             try_block = True,
             overwrite = overwrite,
             **kwargs)
-
-
-
-
-'''
-
-###############################################################################
-#                             VGG-16 end points                               #
-###############################################################################
-
-'vgg_16/conv1/conv1_1'
-'vgg_16/conv1/conv1_2'
-'vgg_16/conv2/conv2_1'
-'vgg_16/conv2/conv2_2'
-'vgg_16/conv3/conv3_1'
-'vgg_16/conv3/conv3_2'
-'vgg_16/conv3/conv3_3'
-'vgg_16/conv4/conv4_1'
-'vgg_16/conv4/conv4_2'
-'vgg_16/conv4/conv4_3'
-'vgg_16/conv5/conv5_1'
-'vgg_16/conv5/conv5_2'
-'vgg_16/conv5/conv5_3'
-'vgg_16/pool1'
-'vgg_16/pool2'
-'vgg_16/pool3'
-'vgg_16/pool4'
-'vgg_16/pool5'
-'vgg_16/fc6'
-'vgg_16/fc7'
-
-
-###############################################################################
-#                        Inception-v1 end points                              #
-###############################################################################
-
-'Conv2d_1a_7x7'
-'MaxPool_2a_3x3'
-'Conv2d_2b_1x1'
-'Conv2d_2c_3x3'
-'MaxPool_3a_3x3'
-'Mixed_3b'
-'Mixed_3c'                  # 28 x 28 x 480
-'MaxPool_4a_3x3'            # 14 x 14 x 832
-'Mixed_4b'
-'Mixed_4c'
-'Mixed_4d'
-'Mixed_4e'
-'Mixed_4f'                  # 14 x 14 x 832
-'MaxPool_5a_2x2'            # 7 x 7 x 1024
-'Mixed_5b'
-'Mixed_5c'                  # 7 x 7 x 1024
-
-
-###############################################################################
-#                        Inception-v3 end points                              #
-###############################################################################
-
-'Conv2d_1a_3x3'
-'Conv2d_2a_3x3'
-'Conv2d_2b_3x3'
-'MaxPool_3a_3x3'
-'Conv2d_3b_1x1'
-'Conv2d_4a_3x3'
-'MaxPool_5a_3x3'
-'Mixed_5b'
-'Mixed_5c'
-'Mixed_5d'
-'Mixed_6a'
-'Mixed_6b'
-'Mixed_6c'
-'Mixed_6d'
-'Mixed_6e'
-'Mixed_7a'
-'Mixed_7b'
-'Mixed_7c'
-
-
-
-'''
-
-
 
 
