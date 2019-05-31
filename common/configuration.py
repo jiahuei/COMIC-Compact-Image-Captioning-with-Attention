@@ -18,7 +18,6 @@ from natural_sort import natural_keys
 class Config(object):
     """ Configuration object."""
     def __init__(self, **kwargs):
-        print('INFO: Using NEW configuration_v2.')
         for key, value in sorted(kwargs.iteritems()):
             setattr(self, key, value)
     

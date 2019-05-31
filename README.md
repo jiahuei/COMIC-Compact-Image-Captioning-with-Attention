@@ -5,7 +5,7 @@ This is the code repo for the TMM 2019 paper "COMIC: Towards a Compact Image Cap
 [[arxiv]](https://arxiv.org/abs/1903.01072) 
 [[IEEE]](https://ieeexplore.ieee.org/abstract/document/8666805) 
 
-**Please NOTE that this code is NOT yet ready.**
+**Some parts of this code may be subject to change.**
 
 ```
 @article{tan2019comic,
@@ -68,7 +68,7 @@ python train.py  \
     --rnn_word_size 128  \
     --attn_num_heads 1
 ```
-
+### InstaPIC models
 InstaPIC models can be trained by passing this additional argument:
 ```bash
     --dataset_file_pattern 'insta_{}_v25595_s15'
@@ -143,6 +143,8 @@ Changes that can be enabled:
 ## Main arguments
 
 ### train.py
+- `train_mode`: The training regime. Choices are `decoder`, `cnn_finetune`, `scst`. 
+All training starts with `decoder` mode (freezing the CNN).
 - `legacy`: If `True`, will match settings as described in paper.
 - `token_type`: Language model. Choices are `radix`, `word`, `char`.
 - `radix_base`: Base value for Radix models.

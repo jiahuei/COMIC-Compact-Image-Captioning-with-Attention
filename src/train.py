@@ -35,6 +35,10 @@ def create_parser():
         '--dataset_file_pattern', type=str,
         default='mscoco_{}_w5_s20_include_restval',
         help='The dataset text files naming pattern.')
+    parser.add_argument(
+        '--train_mode', type=str, default='decoder',
+        choices=['decoder', 'cnn_finetune', 'scst'],
+        help='Str. The training regime.')
     
     parser.add_argument(
         '--legacy', type=bool, default=False,
@@ -131,9 +135,6 @@ def create_parser():
     parser.add_argument(
         '--freeze_scopes', type=str, default='Model/encoder/cnn',
         help='The scopes to freeze / do not train.')
-    #parser.add_argument(
-    #    '--resume_training', type=bool, default=False,
-    #    help='Boolean, whether to resume training from checkpoint. Pass '' for False.')
     parser.add_argument(
         '--checkpoint_path', type=str, default=None,
         help='The checkpoint path.')
@@ -194,33 +195,32 @@ if __name__ == '__main__':
             args.cnn_fm_projection[:3],
             args.name,
             ])
-    log_path = pjoin(log_root, '{}_run_{:02d}'.format(name, args.run))
-    cnn_ft_log = '{}_cnnFT_run_{:02d}'.format(name, args.run)
-    cnn_ft_log = pjoin(log_root, cnn_ft_log)
-    train_fn = train.train_fn
     
-    if not os.path.exists(log_path):
+    train_fn = train.train_fn
+    if args.train_mode == 'decoder':
+        log_path = '{}_run_{:02d}'.format(name, args.run)
         # Maybe download weights
         net = net_params.get_net_params(args.cnn_name)
         utils.maybe_get_ckpt_file(net)
         args.checkpoint_path = net['ckpt_path']
     
-    elif not os.path.exists(cnn_ft_log):
+    elif args.train_mode == 'cnn_finetune':
         # CNN fine-tune
         if args.legacy: raise NotImplementedError
+        log_path = '{}_cnnFT_run_{:02d}'.format(name, args.run)
         args.lr_start = 1e-3
         args.max_epoch = 10
         args.freeze_scopes = ''
         args.checkpoint_path = log_path
-        log_path = pjoin(log_root, cnn_ft_log)
     
-    elif os.path.exists(cnn_ft_log):
-        if args.legacy: raise NotImplementedError
+    elif args.train_mode == 'scst':
         # SCST fine-tune (after CNN fine-tune)
-        raise ValueError('Not ready')
-        log_path = pjoin(log_root, log_name)
+        if args.legacy: raise NotImplementedError
+        log_path = '{}_cnnFT_SCST_run_{:02d}'.format(name, args.run)
         train_fn = train.train_fn_scst
     
+    log_path = pjoin(log_root, log_path)
+    args.resume_training = os.path.exists(log_path)
     
     ###
     

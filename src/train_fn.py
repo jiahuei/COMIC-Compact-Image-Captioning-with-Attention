@@ -179,17 +179,16 @@ def try_to_train(train_fn, try_block=True, overwrite=False, **kargs):
     """Wrapper for the main training function."""
     config = conf.Config(**kargs)
     config.overwrite_safety_check(overwrite)
-    #if config.resume_training:
-    #    print('INFO: Resuming training from checkpoint.')
-    #    fp = os.path.join(config.log_path, 'config.pkl')
-    #    config = conf.load_config(fp)
-    #    config.resume_training = True
-    #    config.checkpoint_path = kargs.pop('log_path')
-    #    config.lr_end = kargs.pop('lr_end')
-    #    config.max_epoch = kargs.pop('max_epoch')
-    #else:
-    #    config.save_config_to_file()
-    config.save_config_to_file()
+    if config.resume_training:
+        print('INFO: Resuming training from checkpoint.')
+        fp = os.path.join(config.log_path, 'config.pkl')
+        config = conf.load_config(fp)
+        config.resume_training = True
+        config.checkpoint_path = kargs.pop('log_path')
+        config.lr_end = kargs.pop('lr_end')
+        config.max_epoch = kargs.pop('max_epoch')
+    else:
+        config.save_config_to_file()
     if try_block:
         try:
             train_fn(config)
