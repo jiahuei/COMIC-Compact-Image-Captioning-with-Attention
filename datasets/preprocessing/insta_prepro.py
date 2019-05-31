@@ -129,7 +129,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
     
     if args.dataset_dir == '':
-        dset_dir = pjoin(os.path.dirname(os.path.dirname(__file__)), 'insta')
+        dset_dir = pjoin(os.path.dirname(CURR_DIR), 'insta')
     else:
         dset_dir = args.dataset_dir
     out_path = pjoin(dset_dir, 'captions')
@@ -300,6 +300,5 @@ if __name__ == '__main__':
                                 tgz_path,
                                 file_size=20*1024**3)
         utils.extract_tar_gz(tgz_path)
-        if os.path.isfile(tgz_path):
-            os.remove(tgz_path)
+        os.remove(tgz_path)
     

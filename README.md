@@ -40,6 +40,40 @@ and run all the dataset pre-processing scripts.
 
 Examples are given in `example.sh`.
 
+## Training the models (MS-COCO)
+### COMIC
+```bash
+python train.py
+```
+### Baseline
+```bash
+python train.py  \
+    --token_type 'word'  \
+    --cnn_fm_projection 'none'  \
+    --attn_num_heads 1
+```
+### Baseline-8
+```bash
+python train.py  \
+    --token_type 'word'  \
+    --cnn_fm_projection 'none'  \
+    --attn_num_heads 8
+```
+### Baseline-SC
+```bash
+python train.py  \
+    --token_type 'word'  \
+    --cnn_fm_projection 'none'  \
+    --rnn_size 160  \
+    --rnn_word_size 128  \
+    --attn_num_heads 1
+```
+
+InstaPIC models can be trained by passing this additional argument:
+```bash
+    --dataset_file_pattern 'insta_{}_v25595_s15'
+```
+
 
 ## Avoid redownloading datasets
 Redownloading can be avoided by:
@@ -54,8 +88,8 @@ python insta_prepro.py --dataset_dir /path/to/insta/dataset
 In the same way, both `train.py` and `infer.py` accept alternative dataset paths.
 
 ```bash
-python train.py --dataset_dir /path/to/coco/dataset
-python infer.py --dataset_dir /path/to/insta/dataset
+python train.py --dataset_dir /path/to/dataset
+python infer.py --dataset_dir /path/to/dataset
 ```
 
 This code assumes the following dataset directory structures:

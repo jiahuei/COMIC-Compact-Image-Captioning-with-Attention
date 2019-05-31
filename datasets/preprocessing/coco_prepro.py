@@ -53,7 +53,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
     
     if args.dataset_dir == '':
-        dset_dir = pjoin(os.path.dirname(os.path.dirname(__file__)), 'mscoco')
+        dset_dir = pjoin(os.path.dirname(CURR_DIR), 'mscoco')
     else:
         dset_dir = args.dataset_dir
     out_path = pjoin(dset_dir, 'captions')

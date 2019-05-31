@@ -115,7 +115,7 @@ def extract_tar_gz(fpath):
     """
     Extracts tar.gz file into the containing directory.
     """
-    tar = tarfile.open(fpath, 'r:gz')
+    tar = tarfile.open(fpath, 'r')
     members = tar.getmembers()
     opath = os.path.split(fpath)[0]
     for m in tqdm(iterable=members,

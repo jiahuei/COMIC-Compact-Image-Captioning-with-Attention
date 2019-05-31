@@ -48,11 +48,6 @@ class ModelBase(object):
             self._softmax_size = c.radix_base + 2
         else:
             self._softmax_size = len(c.itow)
-        if c.cnn_fm_projection is None and c.attn_context_layer is False:
-            attn_size = _shape(self.cnn_fmaps)[-1]
-        else:
-            attn_size = c.rnn_size
-        self._rnn_input_size = c.rnn_word_size + attn_size
     
     
     # TODO: Bookmark
@@ -496,7 +491,6 @@ class ModelBase(object):
                 if exc_scopes == None and model_vars == ckpt_vars:
                     # Restore whole model (resume training)
                     saver.restore(session, checkpoint_path)
-                    lr = None
                 else:
                     # Restore whole model (fine-tune)
                     var_list = tf.get_collection(
@@ -650,6 +644,13 @@ class ModelBase(object):
         """Helper to select RNN cell(s)."""
         c = self._config
         rnn = c.rnn_name
+        
+        if c.cnn_fm_projection is None and c.attn_context_layer is False:
+            attn_size = _shape(self.cnn_fmaps)[-1]
+        else:
+            attn_size = c.rnn_size
+        self._rnn_input_size = c.rnn_word_size + attn_size
+        
         if rnn == 'LSTM':
             cells = tf.contrib.rnn.BasicLSTMCell(
                                         num_units=rnn_size,
@@ -736,11 +737,20 @@ class ModelBase(object):
         c = self._config
         is_inference = self.mode == 'infer'
         swap_memory = True
-        start_id = tf.to_int32(c.wtoi['<GO>'])
-        end_id = tf.to_int32(c.wtoi['<EOS>'])
+        if c.token_type == 'radix':
+            start_id = tf.to_int32(c.radix_base)
+            end_id = tf.to_int32(c.radix_base + 1)
+        else:
+            start_id = tf.to_int32(c.wtoi['<GO>'])
+            end_id = tf.to_int32(c.wtoi['<EOS>'])
         
         if is_inference:
             maximum_iterations = c.infer_max_length
+            if c.token_type == 'radix':
+                max_word_len = len(ops.number_to_base(len(c.wtoi), c.radix_base))
+                maximum_iterations *= max_word_len
+            elif c.token_type == 'char':
+                maximum_iterations *= 5
             beam_search = (is_inference and c.infer_beam_size > 1)
             if sample:
                 return rops.rnn_decoder_search(

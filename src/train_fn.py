@@ -64,7 +64,7 @@ def train_fn(config):
         model_vars = tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES, 'Model')
         model_saver = tf.train.Saver(var_list=model_vars,
                                      max_to_keep=c.max_saves)
-        saver = tf.train.Saver(max_to_keep=5)
+        saver = tf.train.Saver(max_to_keep=2)
     
     r = c.per_process_gpu_memory_fraction
     gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=r)
@@ -205,7 +205,7 @@ def try_to_train(train_fn, try_block=True, overwrite=False, **kargs):
             err_msg += '\r\n\r\nTraceback stack:\r\n\r\n'
             for entry in traceback_extract:        
                 err_msg += '%s\r\n' % str(entry)
-            name = 'error__' + os.path.split(config.log_path)[0] + '.txt'
+            name = 'error__' + os.path.split(config.log_path)[1] + '.txt'
             with open(os.path.join(os.path.dirname(config.log_path), name), 'w') as f:
                 f.write(err_msg)
             print('\nWARNING: An error has occurred.\n')
