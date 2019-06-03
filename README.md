@@ -1,26 +1,33 @@
-COMIC: Towards a Compact Image Captioning Model with Attention
-===================
+# COMIC: Towards a Compact Image Captioning Model with Attention
 
-This is the code repo for the TMM 2019 paper "COMIC: Towards a Compact Image Captioning Model with Attention".
-[[arxiv]](https://arxiv.org/abs/1903.01072) 
-[[IEEE]](https://ieeexplore.ieee.org/abstract/document/8666805) 
+Released on June 03, 2019
 
-Pre-trained checkpoints for the COMIC models are available in `pretrained` dir. 
-Details are provided in a separate README.
+## Description
 
-*Some parts of this code may be subject to change.*
+This is the code repo of our TMM2019 work titled [COMIC: Towards a Compact Image Captioning Model with Attention (https://arxiv.org/abs/1903.01072).
+
+<img src="TMM.png" height="200">
+
+## Source Code
+Pre-trained checkpoints for the COMIC models are available in [pretrained] folder. Details are provided in a separate README.
+
+Note that, some parts of this code may be subject to change.
+
+## Citation
+
+Please cite the following paper if you use this repository in your reseach:
 
 ```
 @article{tan2019comic,
   title={COMIC: Towards A Compact Image Captioning Model with Attention},
   author={Tan, Jia Huei and Chan, Chee Seng and Chuah, Joon Huang},
   journal={IEEE Transactions on Multimedia},
-  year={2019},
+  year={in Press},
   publisher={IEEE}
 }
 ```
 
-## Requirements
+## Dependencies
 - tensorflow 1.9.0
 - python 2.7
 - java 1.8.0
@@ -31,7 +38,7 @@ Details are provided in a separate README.
 
 
 ## Running the code
-Assuming you are in the `src` folder:
+Assuming you are in the [src] folder:
 
 1. Run `setup.sh`. This will download the required Stanford models 
 and run all the dataset pre-processing scripts.
@@ -76,7 +83,6 @@ InstaPIC models can be trained by passing this additional argument:
 ```bash
     --dataset_file_pattern 'insta_{}_v25595_s15'
 ```
-
 
 ## Avoid redownloading datasets
 Redownloading can be avoided by:
@@ -151,7 +157,7 @@ last training checkpoint of RNN training.
 | **COMIC-256**                 | 0.308     | 0.944     | 0.176     |
 | COMIC-256 (CNN fine-tune)     | 0.328     | 1.001     | 0.185     |
 
-See `pretrained` dir.
+See [pretrained] dir.
 
 ## Main arguments
 
@@ -203,5 +209,13 @@ To perform online server evaluation:
 1. Zip the files and submit.
 
 
+## Feedback
+Suggestions and opinions on this dataset (both positive and negative) are greatly welcomed. Please contact the authors by sending an email to
+`tan.jia.huei at gmail.com`or `cs.chan at um.edu.my`.
+
+## License and Copyright
+The project is open source under BSD-3 license (see the ``` LICENSE ``` file).
+
+&#169;2019 Center of Image and Signal Processing, Faculty of Computer Science and Information Technology, University of Malaya.
 
 
