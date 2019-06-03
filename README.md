@@ -145,7 +145,7 @@ last training checkpoint of RNN training.
 | Default mode                  | BLEU-4    | CIDEr     | SPICE     |
 | -------------                 | --------- | --------- | --------- |
 | Baseline                      | 0.311     | 0.937     | 0.174     |
-| **COMIC-256                   | 0.308     | 0.944     | 0.176     |**
+| **COMIC-256**                 | 0.308     | 0.944     | 0.176     |
 | COMIC-256 (CNN fine-tune)     | 0.328     | 1.001     | 0.185     |
 
 
