@@ -4,12 +4,12 @@ Released on June 03, 2019
 
 ## Description
 
-This is the code repo of our TMM2019 work titled [COMIC: Towards a Compact Image Captioning Model with Attention (https://arxiv.org/abs/1903.01072).
+This is the code repo of our TMM2019 work titled [COMIC: Towards a Compact Image Captioning Model with Attention](https://arxiv.org/abs/1903.01072). In this paper, we tackle the problem of compactness of image captioning models which is hitherto unexplored. We showed competitive results on both MS-COCO and InstaPIC-1.1M datasets despite having an embedding vocabularly size that is 39x-99x smaller.
 
 <img src="TMM.png" height="200">
 
 ## Source Code
-Pre-trained checkpoints for the COMIC models are available in [pretrained] folder. Details are provided in a separate README.
+Pre-trained checkpoints for the COMIC models are available in [pretrained](https://github.com/jiahuei/COMIC-Towards-A-Compact-Image-Captioning-Model-with-Attention/tree/master/pretrained) folder. Details are provided in a separate README.
 
 Note that, some parts of this code may be subject to change.
 
@@ -38,14 +38,14 @@ Please cite the following paper if you use this repository in your reseach:
 
 
 ## Running the code
-Assuming you are in the [src] folder:
+Assuming you are in the [src](https://github.com/jiahuei/COMIC-Towards-A-Compact-Image-Captioning-Model-with-Attention/tree/master/src) folder:
 
 1. Run `setup.sh`. This will download the required Stanford models 
 and run all the dataset pre-processing scripts.
 
-1. Run the training script `python train.py`.
+2. Run the training script `python train.py`.
 
-1. Run the inference and evaluation script 
+3. Run the inference and evaluation script 
 `python infer.py --infer_checkpoints_dir mscoco/logdir`.
 
 Examples are given in `example.sh`.
@@ -87,7 +87,7 @@ InstaPIC models can be trained by passing this additional argument:
 ## Avoid redownloading datasets
 Redownloading can be avoided by:
 1. Editing `setup.sh`
-1. Providing the path to the directory containing the dataset files
+2. Providing the path to the directory containing the dataset files
 
 ```bash
 python coco_prepro.py --dataset_dir /path/to/coco/dataset
@@ -157,7 +157,7 @@ last training checkpoint of RNN training.
 | **COMIC-256**                 | 0.308     | 0.944     | 0.176     |
 | COMIC-256 (CNN fine-tune)     | 0.328     | 1.001     | 0.185     |
 
-See [pretrained] dir.
+See [pretrained](https://github.com/jiahuei/COMIC-Towards-A-Compact-Image-Captioning-Model-with-Attention/tree/master/pretrained) folder.
 
 ## Main arguments
 
@@ -205,8 +205,8 @@ This code uses the standard `coco-caption` code with *SPICE* metric.
 
 To perform online server evaluation:
 1. Infer on `coco_test` (test2014), rename the JSON output file to `captions_test2014__results.json`.
-1. Infer on `coco_valid` (val2014), rename the JSON output file to `captions_val2014__results.json`.
-1. Zip the files and submit.
+2. Infer on `coco_valid` (val2014), rename the JSON output file to `captions_val2014__results.json`.
+3. Zip the files and submit.
 
 
 ## Feedback
