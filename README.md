@@ -1,21 +1,38 @@
 # COMIC: Towards a Compact Image Captioning Model with Attention
 
-Released on June 03, 2019
+Released on 03 June 2019.
+
 
 ## Description
 
-This is the code repo of our TMM2019 work titled [COMIC: Towards a Compact Image Captioning Model with Attention](https://arxiv.org/abs/1903.01072). In this paper, we tackle the problem of compactness of image captioning models which is hitherto unexplored. We showed competitive results on both MS-COCO and InstaPIC-1.1M datasets despite having an embedding vocabularly size that is 39x-99x smaller.
+This is the code repo of our TMM 2019 work titled 
+["COMIC: Towards a Compact Image Captioning Model with Attention"](https://arxiv.org/abs/1903.01072). 
+In this paper, we tackle the problem of compactness of image captioning models which is hitherto unexplored. 
+We showed competitive results on both MS-COCO and InstaPIC-1.1M datasets despite having an embedding vocabularly size that is 39x-99x smaller.
 
 <img src="TMM.png" height="200">
 
-## Source Code
-Pre-trained checkpoints for the COMIC models are available in [pretrained](https://github.com/jiahuei/COMIC-Towards-A-Compact-Image-Captioning-Model-with-Attention/tree/master/pretrained) folder. Details are provided in a separate README.
 
-Note that, some parts of this code may be subject to change.
+## Code structure
+```
+.
++-- common
+|   +-- {shared libraries and utility functions}
++-- datasets
+|   +-- preprocessing
+|       +-- {dataset pre-processing scripts}
++-- pretrained
+|   +-- {pre-trained checkpoints for some COMIC models. Details are provided in a separate README.}
++-- src
+    +-- {main scripts}
+```
+
+Please note that some parts of this code may be subject to change.
+
 
 ## Citation
 
-Please cite the following paper if you use this repository in your reseach:
+If you find this repository useful for your research or work, please cite:
 
 ```
 @article{tan2019comic,
@@ -38,7 +55,7 @@ Please cite the following paper if you use this repository in your reseach:
 
 
 ## Running the code
-Assuming you are in the [src](https://github.com/jiahuei/COMIC-Towards-A-Compact-Image-Captioning-Model-with-Attention/tree/master/src) folder:
+Assuming you are in the `src` folder:
 
 1. Run `setup.sh`. This will download the required Stanford models 
 and run all the dataset pre-processing scripts.
@@ -49,6 +66,7 @@ and run all the dataset pre-processing scripts.
 `python infer.py --infer_checkpoints_dir mscoco/logdir`.
 
 Examples are given in `example.sh`.
+
 
 ## Training the models (MS-COCO)
 ### COMIC-256
@@ -134,8 +152,8 @@ To match the settings as described in our TMM paper,
 set the `legacy` argument of `train.py` to `True` (the default is `False`). 
 This will override some of the provided arguments.
 
-When using the default arguments, the differences compared to our TMM paper settings are:
-- Attention map dropout is set to `0.1`
+When using the default arguments, the differences compared to our TMM paper are:
+- Attention map dropout is set to `0.1` instead of none
 - RNN init method is changed to `x_{t=-1} = W_I * CNN(I)`
 from `h_{t=-1} = W_I tanh (LN (I_{embed} ))`
 - Changed training scheme (learning rate, ADAM epsilon)
@@ -149,15 +167,17 @@ last training checkpoint of RNN training.
 - Context layer (linear projection after attention)
 - SCST [[arxiv]](https://arxiv.org/abs/1612.00563) **(to be added soon)**
 
-### Performance differences in MS-COCO
+### Performance differences on MS-COCO
 
 | Default mode                  | BLEU-4    | CIDEr     | SPICE     |
 | -------------                 | --------- | --------- | --------- |
-| Baseline                      | 0.311 (0.296)     | 0.937  (0.885)   | 0.174  (0.167)   |
-| **COMIC-256**                 | 0.308 (0.292)    | 0.944   (0.881)  | 0.176    (0.164) |
+| Baseline                      | 0.311     | 0.937     | 0.174     |
+| **COMIC-256**                 | 0.308     | 0.944     | 0.176     |
 | COMIC-256 (CNN fine-tune)     | 0.328     | 1.001     | 0.185     |
 
-Note that scores in bracket () indicate original TMM paper results. Please see [pretrained](https://github.com/jiahuei/COMIC-Towards-A-Compact-Image-Captioning-Model-with-Attention/tree/master/pretrained) folder.
+Please see [pretrained](https://github.com/jiahuei/COMIC-Towards-A-Compact-Image-Captioning-Model-with-Attention/tree/master/pretrained) folder 
+for checkpoints of COMIC models listed above.
+
 
 ## Main arguments
 
@@ -210,12 +230,15 @@ To perform online server evaluation:
 
 
 ## Feedback
-Suggestions and opinions on this dataset (both positive and negative) are greatly welcomed. Please contact the authors by sending an email to
+Suggestions and opinions (both positive and negative) are greatly welcomed. 
+Please contact the authors by sending an email to 
 `tan.jia.huei at gmail.com` or `cs.chan at um.edu.my`.
 
-## License and Copyright
-The project is open source under BSD-3 license (see the ``` LICENSE ``` file).
 
-&#169;2019 Center of Image and Signal Processing, Faculty of Computer Science and Information Technology, University of Malaya.
+## License and Copyright
+The project is open source under Apache-2.0 license (see the `LICENSE` file).
+
+&#169;2019 Center of Image and Signal Processing, 
+Faculty of Computer Science and Information Technology, University of Malaya.
 
 
