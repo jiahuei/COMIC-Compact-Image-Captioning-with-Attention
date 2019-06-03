@@ -129,14 +129,14 @@ This code assumes the following dataset directory structures:
 ```
 
 
-## Differences compared to the paper
-To match the settings as described in the paper, 
+## Differences compared to our paper
+To match the settings as described in our TMM paper, 
 set the `legacy` argument of `train.py` to `True` (the default is `False`). 
 This will override some of the provided arguments.
 
-When using default arguments, the differences are:
-- Attention map dropout set to `0.1`
-- RNN init method changed to `x_{t=-1} = W_I * CNN(I)`
+When using the default arguments, the differences compared to our TMM paper settings are:
+- Attention map dropout is set to `0.1`
+- RNN init method is changed to `x_{t=-1} = W_I * CNN(I)`
 from `h_{t=-1} = W_I tanh (LN (I_{embed} ))`
 - Changed training scheme (learning rate, ADAM epsilon)
 
@@ -147,7 +147,7 @@ last training checkpoint of RNN training.
 [[arxiv]](https://arxiv.org/abs/1512.05287)
 [[tf]](https://www.tensorflow.org/versions/r1.9/api_docs/python/tf/contrib/rnn/DropoutWrapper#methods)
 - Context layer (linear projection after attention)
-- SCST [[arxiv]](https://arxiv.org/abs/1612.00563) **(to be added)**
+- SCST [[arxiv]](https://arxiv.org/abs/1612.00563) **(to be added soon)**
 
 ### Performance differences
 
@@ -211,7 +211,7 @@ To perform online server evaluation:
 
 ## Feedback
 Suggestions and opinions on this dataset (both positive and negative) are greatly welcomed. Please contact the authors by sending an email to
-`tan.jia.huei at gmail.com`or `cs.chan at um.edu.my`.
+`tan.jia.huei at gmail.com` or `cs.chan at um.edu.my`.
 
 ## License and Copyright
 The project is open source under BSD-3 license (see the ``` LICENSE ``` file).
