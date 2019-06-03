@@ -84,8 +84,8 @@ InstaPIC models can be trained by passing this additional argument:
     --dataset_file_pattern 'insta_{}_v25595_s15'
 ```
 
-## Avoid redownloading datasets
-Redownloading can be avoided by:
+## Avoid re-downloading datasets
+Re-downloading can be avoided by:
 1. Editing `setup.sh`
 2. Providing the path to the directory containing the dataset files
 
@@ -149,15 +149,15 @@ last training checkpoint of RNN training.
 - Context layer (linear projection after attention)
 - SCST [[arxiv]](https://arxiv.org/abs/1612.00563) **(to be added soon)**
 
-### Performance differences
+### Performance differences in MS-COCO
 
 | Default mode                  | BLEU-4    | CIDEr     | SPICE     |
 | -------------                 | --------- | --------- | --------- |
-| Baseline                      | 0.311     | 0.937     | 0.174     |
-| **COMIC-256**                 | 0.308     | 0.944     | 0.176     |
+| Baseline                      | 0.311 (0.296)     | 0.937  (0.885)   | 0.174  (0.167)   |
+| **COMIC-256**                 | 0.308 (0.292)    | 0.944   (0.881)  | 0.176    (0.164) |
 | COMIC-256 (CNN fine-tune)     | 0.328     | 1.001     | 0.185     |
 
-See [pretrained](https://github.com/jiahuei/COMIC-Towards-A-Compact-Image-Captioning-Model-with-Attention/tree/master/pretrained) folder.
+Note that scores in bracket () indicate original TMM paper results. Please see [pretrained](https://github.com/jiahuei/COMIC-Towards-A-Compact-Image-Captioning-Model-with-Attention/tree/master/pretrained) folder.
 
 ## Main arguments
 
@@ -199,8 +199,8 @@ These are used for MS-COCO online server evaluation.
 
 
 ## Microsoft COCO Caption Evaluation
-This code uses the standard `coco-caption` code with *SPICE* metric.
-[[Link to repo]](https://github.com/tylin/coco-caption/tree/3a9afb2682141a03e1cdc02b0df6770d2c884f6f)
+This code uses the standard `coco-caption` code with *SPICE* metric
+[[Link to repo]](https://github.com/tylin/coco-caption/tree/3a9afb2682141a03e1cdc02b0df6770d2c884f6f).
 
 
 To perform online server evaluation:
