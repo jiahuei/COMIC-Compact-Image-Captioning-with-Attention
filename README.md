@@ -5,6 +5,9 @@ This is the code repo for the TMM 2019 paper "COMIC: Towards a Compact Image Cap
 [[arxiv]](https://arxiv.org/abs/1903.01072) 
 [[IEEE]](https://ieeexplore.ieee.org/abstract/document/8666805) 
 
+Pre-trained checkpoints for the COMIC models are available in `pretrained` dir. 
+Details are provided in a separate README.
+
 *Some parts of this code may be subject to change.*
 
 ```
@@ -41,7 +44,7 @@ and run all the dataset pre-processing scripts.
 Examples are given in `example.sh`.
 
 ## Training the models (MS-COCO)
-### COMIC
+### COMIC-256
 ```bash
 python train.py
 ```
@@ -138,7 +141,7 @@ last training checkpoint of RNN training.
 [[arxiv]](https://arxiv.org/abs/1512.05287)
 [[tf]](https://www.tensorflow.org/versions/r1.9/api_docs/python/tf/contrib/rnn/DropoutWrapper#methods)
 - Context layer (linear projection after attention)
-- SCST [[arxiv]](https://arxiv.org/abs/1612.00563) (to be added)
+- SCST [[arxiv]](https://arxiv.org/abs/1612.00563) **(to be added)**
 
 ### Performance differences
 
@@ -148,7 +151,7 @@ last training checkpoint of RNN training.
 | **COMIC-256**                 | 0.308     | 0.944     | 0.176     |
 | COMIC-256 (CNN fine-tune)     | 0.328     | 1.001     | 0.185     |
 
-
+See `pretrained` dir.
 
 ## Main arguments
 

@@ -29,7 +29,7 @@ def create_parser():
         help='The split to perform inference on.')
     parser.add_argument(
         '--infer_checkpoints_dir', type=str,
-        default=pjoin('mscoco', 'radix_b256_add_softmax_h8_tie_lstm_run_01'),
+        default=pjoin('mscoco', 'radix_b256_add_LN_softmax_h8_tie_lstm_run_01'),
         help='The directory containing the checkpoint files.')
     parser.add_argument(
         '--infer_checkpoints', type=str, default='all',
