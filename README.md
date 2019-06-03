@@ -5,7 +5,7 @@ This is the code repo for the TMM 2019 paper "COMIC: Towards a Compact Image Cap
 [[arxiv]](https://arxiv.org/abs/1903.01072) 
 [[IEEE]](https://ieeexplore.ieee.org/abstract/document/8666805) 
 
-**Some parts of this code may be subject to change.**
+*Some parts of this code may be subject to change.*
 
 ```
 @article{tan2019comic,
@@ -130,14 +130,24 @@ When using default arguments, the differences are:
 - RNN init method changed to `x_{t=-1} = W_I * CNN(I)`
 from `h_{t=-1} = W_I tanh (LN (I_{embed} ))`
 - Changed training scheme (learning rate, ADAM epsilon)
-- CNN fine-tuning during first repeat run
 
 Changes that can be enabled:
+- CNN fine-tuning via the `train_mode` flag. Model is initialised using the 
+last training checkpoint of RNN training.
 - RNN variational dropout 
 [[arxiv]](https://arxiv.org/abs/1512.05287)
 [[tf]](https://www.tensorflow.org/versions/r1.9/api_docs/python/tf/contrib/rnn/DropoutWrapper#methods)
 - Context layer (linear projection after attention)
 - SCST [[arxiv]](https://arxiv.org/abs/1612.00563) (to be added)
+
+### Performance differences
+
+| Default mode                  | BLEU-4    | CIDEr     | SPICE     |
+| -------------                 | --------- | --------- | --------- |
+| Baseline                      | 0.311     | 0.937     | 0.174     |
+| **COMIC-256                   | 0.308     | 0.944     | 0.176     |**
+| COMIC-256 (CNN fine-tune)     | 0.328     | 1.001     | 0.185     |
+
 
 
 ## Main arguments
@@ -161,7 +171,7 @@ All training starts with `decoder` mode (freezing the CNN).
     
 - `attn_num_heads`: Number of attention heads.
 - `attn_context_layer`: If `True`, add linear projection after multi-head attention.
-- `attn_alignment_method`: Alignment / composition method. Choices are `add`, `dot`.
+- `attn_alignment_method`: Alignment / composition method. Choices are `add_LN`, `dot`.
 - `attn_probability_fn`: Attention map probability function. Choices are `softmax`, `sigmoid`.
 
 ### infer.py

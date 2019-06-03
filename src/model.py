@@ -75,7 +75,7 @@ class CaptionModel(ModelBase):
         t = tf.get_collection('softmax_temperatures')[0]
         tf.summary.scalar('softmax_temperature', t)
         self.summary_op = tf.summary.merge_all()
-        print('INFO: Model initialisation complete.')
+        print('INFO: Model `{}` initialisation complete.'.format(mode))
 
 
 class CaptionModel_SCST(ModelBase):
@@ -143,7 +143,7 @@ class CaptionModel_SCST(ModelBase):
         t = tf.get_collection('softmax_temperatures')[0]
         tf.summary.scalar('softmax_temperature', t)
         self.summary_op = tf.summary.merge_all()
-        print('INFO: Model initialisation complete.')
+        print('INFO: Model `{}` initialisation complete.'.format(scst_mode))
     
     
     

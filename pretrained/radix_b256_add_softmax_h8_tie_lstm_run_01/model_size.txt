@@ -1,0 +1,41 @@
+
+INFO: Scope `Model/decoder/rnn_decoder` contains 4,297,987 trainable parameters.
+
+Model/decoder/rnn_decoder/rnn_init_input/projection/weight
+[1024, 768]
+
+Model/decoder/rnn_decoder/rnn_init_input/basic_lstm_cell/kernel
+[1280, 2048]
+
+Model/decoder/rnn_decoder/rnn_init_input/basic_lstm_cell/bias
+[2048]
+
+Model/decoder/rnn_decoder/memory_layer/kernel
+[832, 512]
+
+Model/decoder/rnn_decoder/output_projection/kernel
+[512, 258]
+
+Model/decoder/rnn_decoder/output_projection/bias
+[258]
+
+Model/decoder/rnn_decoder/embedding_map
+[258, 256]
+
+Model/decoder/rnn_decoder/decoder/multi_head_attention_wrapper_v3/multi_add_attention/query_layer/kernel
+[512, 512]
+
+Model/decoder/rnn_decoder/decoder/multi_head_attention_wrapper_v3/multi_add_attention/attention_v
+[512]
+
+Model/decoder/rnn_decoder/decoder/multi_head_attention_wrapper_v3/multi_add_attention/LN_tanh/beta
+[512]
+
+Model/decoder/rnn_decoder/decoder/multi_head_attention_wrapper_v3/multi_add_attention/LN_tanh/gamma
+[512]
+
+Model/decoder/rnn_decoder/decoder/multi_head_attention_wrapper_v3/softmax_temperature
+[]
+
+
+

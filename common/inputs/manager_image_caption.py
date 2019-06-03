@@ -23,11 +23,6 @@ pjoin = os.path.join
 slim = tf.contrib.slim
 
 
-_DEBUG = False
-def _dprint(string):
-    return ops.dprint(string, _DEBUG)
-
-
 class InputManager(object):
     """ Input Manager object."""
     
@@ -147,8 +142,6 @@ class InputManager(object):
                 #num_threads = 1
                 batch_size = c.batch_size_eval
                 assert len(data) % batch_size == 0
-        _dprint('{}: Number of examples: {}'.format(
-                        self.__class__.__name__, len(data)))
         
         with tf.name_scope('batch_{}'.format(split)):
             
@@ -220,9 +213,7 @@ class InputManager(object):
         if is_training:
             random.shuffle(data)
             print('INFO: Training data shuffled, idx {:3,d}'.format(idx))
-        else:
-            _dprint('{}: Data idx {:3,d}'.format(
-                                    self.__class__.__name__, idx))
+        
         while True:
             for d in data:
                 # d[0] is filepath, d[1] is a list of chars / words
@@ -234,9 +225,6 @@ class InputManager(object):
             if is_training:
                 random.shuffle(data)
                 print('INFO: Training data shuffled, idx {:3,d}'.format(idx))
-            else:
-                _dprint('{}: Data idx {:3,d}'.format(
-                                    self.__class__.__name__, idx))
 
 
 class InputManager_Radix(InputManager):
@@ -275,9 +263,7 @@ class InputManager_Radix(InputManager):
         if is_training:
             random.shuffle(data)
             print('INFO: Training data shuffled, idx {:3,d}'.format(idx))
-        else:
-            _dprint('{}: Data idx {:3,d}'.format(
-                                    self.__class__.__name__, idx))
+        
         while True:
             for d in data:
                 # d[0] is filepath, d[1] is a list of chars / words
@@ -290,9 +276,6 @@ class InputManager_Radix(InputManager):
             if is_training:
                 random.shuffle(data)
                 print('INFO: Training data shuffled, idx {:3,d}'.format(idx))
-            else:
-                _dprint('{}: Data idx {:3,d}'.format(
-                                    self.__class__.__name__, idx))
 
 
 class InputManager_Char(InputManager):
@@ -356,9 +339,7 @@ class InputManager_Char(InputManager):
         if is_training:
             random.shuffle(data)
             print('INFO: Training data shuffled, idx {:3,d}'.format(idx))
-        else:
-            _dprint('{}: Data idx {:3,d}'.format(
-                                    self.__class__.__name__, idx))
+        
         while True:
             for d in data:
                 # d[0] is filepath, d[1] is a list of chars / words
@@ -371,9 +352,6 @@ class InputManager_Char(InputManager):
             if is_training:
                 random.shuffle(data)
                 print('INFO: Training data shuffled, idx {:3,d}'.format(idx))
-            else:
-                _dprint('{}: Data idx {:3,d}'.format(
-                                    self.__class__.__name__, idx))
 
 
 class InputManager_SCST(InputManager):
@@ -428,8 +406,6 @@ class InputManager_SCST(InputManager):
                 self.config.max_step = int(len(data) / batch_size * c.max_epoch / gs)
             else:
                 return None
-        _dprint('{}: Number of examples: {}'.format(
-                        self.__class__.__name__, len(data)))
         
         with tf.name_scope('batch_{}'.format(split)):
             
@@ -480,9 +456,7 @@ class InputManager_SCST(InputManager):
         if is_training:
             random.shuffle(data)
             print('INFO: Training data shuffled, idx {:3,d}'.format(idx))
-        else:
-            _dprint('{}: Data idx {:3,d}'.format(
-                                    self.__class__.__name__, idx))
+        
         while True:
             for d in data:
                 # d[0] is filepath, d[1] is a list of captions for that image
@@ -495,136 +469,7 @@ class InputManager_SCST(InputManager):
             if is_training:
                 random.shuffle(data)
                 print('INFO: Training data shuffled, idx {:3,d}'.format(idx))
-            else:
-                _dprint('{}: Data idx {:3,d}'.format(
-                                    self.__class__.__name__, idx))
 
-
-
-###############################################################################
-
-
-
-class InputManagerAE(InputManager):
-    """
-    Input Manager object.
-    
-    For Auto-Encoder or Denoising Auto-Encoder.
-    """
-    
-    def __init__(self, config, is_inference=False):
-        """
-        Loads the h5 file containing caption data and corresponding image paths.
-        """ 
-        #super(AEInputManager, self).__init__(config, is_inference)
-        self._setup(config, is_inference)
-    
-    
-    def _batch_setup(self, split):
-        """
-        Produce a batch of examples using tf.data.
-        """
-        c = self.config
-        
-        is_training = 'train' in split and not self.is_inference
-        if self.is_inference:
-            batch_size = c.batch_size_infer
-            data = []
-            for f in self.filenames_infer:
-                data.append([f, ['null']])
-            assert len(data) % batch_size == 0
-            self.config.split_sizes['infer'] = len(data)
-        else:
-            # Data format: filepath,w0 w1 w2 w3 w4 ... wN
-            fp = pjoin(c.dataset_dir, 'captions',
-                       c.dataset_file_pattern.format(split))
-            with open(fp + '.txt', 'r') as f:
-                data = [l.strip().split(',') for l in f.readlines()]
-            data = [[l[0], l[1].split(' ')] for l in data]
-            self.config.split_sizes[split] = len(data)
-            
-            if is_training:
-                #num_threads = max(4, c.num_threads)
-                batch_size = c.batch_size_train
-                self.config.max_step = int(len(data) / batch_size * c.max_epoch)
-            else:
-                #num_threads = 1
-                batch_size = c.batch_size_eval
-                assert len(data) % batch_size == 0
-        _dprint('{}: Number of examples: {}'.format(
-                        self.__class__.__name__, len(data)))
-        
-        with tf.name_scope('batch_{}'.format(split)):
-            
-            def _gen(data, is_training):
-                """ Wraps the data generator function. """
-                return lambda: self._gen(data, is_training=is_training)
-            
-            def _set_shape(batch_size, caption_enc, caption_dec):
-                caption_enc.set_shape([batch_size , None])
-#                caption_enc.set_shape([batch_size , 22])
-                caption_dec.set_shape([batch_size , None])
-                return caption_enc, caption_dec
-            
-            def _get_len(caption_enc, caption_dec):
-                return tf.shape(caption_dec)[0]
-            
-            # Fetch captions from data generator
-            dataset = tf.data.Dataset.from_generator(
-                                        generator=_gen(data, is_training),
-                                        #generator=gen,
-                                        output_shapes=([None], [None]),
-                                        output_types=(tf.int32, tf.int32))
-            # Pre-fetch (~4x increase in training speed)
-            dataset = dataset.prefetch(batch_size * 80)
-            # Bucketing and batching
-            buckets = [10, 12, 14]      # MSCOCO word-based
-            dataset = dataset.apply(tf.contrib.data.bucket_by_sequence_length(
-                        element_length_func=_get_len,
-                        bucket_boundaries=buckets,
-                        bucket_batch_sizes=[batch_size] * (len(buckets) + 1),
-                        padded_shapes=None,
-                        padding_values=(c.wtoi['<PAD>'], c.wtoi['<PAD>']),
-                        pad_to_bucket_boundary=False))
-            dataset = dataset.map(
-                        lambda cap1, cap2: _set_shape(batch_size, cap1, cap2))
-            # Get the dataset iterator
-            iterator = dataset.make_one_shot_iterator()
-            batch = iterator.get_next()
-            return batch
-    
-    
-    def _gen(self, data, is_training=True):
-        """
-        Generator fn, yields the image filepath and word IDs.
-        Handles dataset shuffling.
-        """
-        c = self.config
-        #length = len(data)
-        idx = 0
-        if is_training:
-            random.shuffle(data)
-            print('INFO: Training data shuffled, idx {:3,d}'.format(idx))
-        else:
-            _dprint('{}: Data idx {:3,d}'.format(
-                                    self.__class__.__name__, idx))
-        while True:
-            for d in data:
-                # d[0] is filepath, d[1] is a list of chars / words
-                caption = [c.wtoi.get(w, c.wtoi['<UNK>']) for w in d[1]]
-                cap_rev = list(reversed(caption))
-                #cap_rev = [cap_rev[-1]] + cap_rev[1:-1] + [cap_rev[0]]
-                caption = np.array(caption).astype(np.int32)
-                cap_rev = np.array(cap_rev).astype(np.int32)
-                yield (cap_rev, caption)
-                idx += 1
-            # Shuffle at the end of epoch
-            if is_training:
-                random.shuffle(data)
-                print('INFO: Training data shuffled, idx {:3,d}'.format(idx))
-            else:
-                _dprint('{}: Data idx {:3,d}'.format(
-                                    self.__class__.__name__, idx))
 
 
 

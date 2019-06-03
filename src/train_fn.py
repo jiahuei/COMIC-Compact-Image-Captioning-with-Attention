@@ -23,7 +23,7 @@ value_summary = ops.add_value_summary
 def train_fn(config):
     """Main training function. To be called by `try_to_train()`."""
     
-    print('TensorFlow version: r{}'.format(tf.__version__))
+    #print('TensorFlow version: r{}'.format(tf.__version__))
     print('INFO: Logging to `{}`.'.format(config.log_path))
     
     # Setup input pipeline & Build model
@@ -147,7 +147,7 @@ def train_fn(config):
 def _lr_reduce_check(config, epoch, learning_rate):
     """ Helper to reduce learning rate every n epochs."""
     if (learning_rate > config.lr_end 
-        and epoch % config.reduce_lr_every_n_epochs == 0):
+        and epoch % config.lr_reduce_every_n_epochs == 0):
         learning_rate /= 2
         if learning_rate < config.lr_end:
             learning_rate = config.lr_end

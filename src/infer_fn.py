@@ -10,7 +10,7 @@ from __future__ import division
 from __future__ import print_function
 
 import tensorflow as tf
-import numpy as np
+#import numpy as np
 import cPickle as pickle
 import os, sys, re, time, json
 from tqdm import tqdm
@@ -31,11 +31,6 @@ pjoin = os.path.join
 
 P_COCO = re.compile(r'(?<=_)\d+')
 P_CKPT = re.compile(r'\d+')
-_DEBUG = False
-
-
-def _dprint(string):
-    return ops.dprint(string, _DEBUG)
 
 
 def _baseN_arr_to_dec(baseN_array, base):
@@ -130,7 +125,6 @@ def run_inference(config, curr_ckpt_path):
     gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=r)
     sess = tf.Session(config=tf.ConfigProto(gpu_options=gpu_options), graph=g)
     num_batches = int(c.split_sizes['infer'] / batch_size)
-    _dprint('infer_fn: Number of batches: {}'.format(num_batches))
     
     raw_outputs = dict(captions = {},
                        attention = {},
@@ -153,10 +147,7 @@ def run_inference(config, curr_ckpt_path):
         for step in tqdm(range(num_batches), desc=desc, ncols=100):
             word_ids, attn_maps = sess.run(m_infer.infer_output)
             captions = _id_to_caption(word_ids, c)
-            #if c.infer_beam_size == 1:
-            if step == 0: _dprint('Attn map shape (before split): {}'.format(attn_maps.shape))
-            attn_maps = np.split(attn_maps, batch_size)
-            #_dprint('Attn map shape (after split):'.format(attn_maps))
+            #attn_maps = np.split(attn_maps, batch_size)
             
             # Get image ids, compile results
             batch_start = step * batch_size
@@ -224,7 +215,6 @@ def evaluate_model(config,
     output_filename = 'captions___{}.json'.format(ckpt_num)
     coco_json = pjoin(c.infer_save_path, output_filename)
     
-    _dprint('Current checkpoint path: {}'.format(curr_ckpt_path))
     if c.run_inference:
         if not os.path.isfile('{}.index'.format(curr_ckpt_path)):
             print("WARNING: `{}.index` not found. Checkpoint skipped.".format(ckpt_file))

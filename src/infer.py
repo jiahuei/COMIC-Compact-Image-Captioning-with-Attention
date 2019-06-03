@@ -14,14 +14,9 @@ CURR_DIR = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(os.path.join(CURR_DIR, '..', 'common'))
 import infer_fn as infer
 import configuration as conf
-import ops
+#import ops
 from natural_sort import natural_keys as nat_key
 pjoin = os.path.join
-_DEBUG = False
-
-
-def _dprint(string):
-    return ops.dprint(string, _DEBUG)
 
 
 def create_parser():

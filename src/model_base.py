@@ -23,17 +23,12 @@ import tensorflow as tf
 from tensorflow.python.layers.core import Dense
 CURR_DIR = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(os.path.join(CURR_DIR, '..', 'common'))
-from natural_sort import natural_keys
+#from natural_sort import natural_keys
 from nets import nets_factory
 import ops
 import ops_rnn as rops
 _shape = ops.shape
 pjoin = os.path.join
-
-
-_DEBUG = False
-def _dprint(string):
-    return ops.dprint(string, _DEBUG)
 
 
 class ModelBase(object):
@@ -97,29 +92,15 @@ class ModelBase(object):
         else:
             self.im_embed = tf.squeeze(net, axis=[1, 2])
         
-        _dprint('{}: `self.im_embed` shape: {}'.format(
-                self.__class__.__name__, _shape(self.im_embed)))
-        if _DEBUG:
-            _fname = pjoin(c.log_path, '{}_end_points.txt'.format(c.cnn_name))
-            mssg = ''
-            for k in sorted(end_points.keys(), key=natural_keys):
-                mssg += '{}\r\n{}\r\n\r\n'.format(k, _shape(end_points[k]))
-            with open(_fname, 'w') as f:
-                f.write(mssg)
-        
         # Feature maps
-        cnn_fm = end_points[c.cnn_fm_attention]
-        _dprint('{}: Extracted CNN feature map shape: {}'.format(
-                self.__class__.__name__, _shape(cnn_fm)))
         # Reshape CNN feature map for RNNs
         # Must have fully defined inner dims
+        cnn_fm = end_points[c.cnn_fm_attention]
         fm_ds = tf.shape(cnn_fm)                            # (n, h, w, c)
         fm_ss = _shape(cnn_fm)
         fm_s = tf.stack([fm_ss[0], fm_ds[1] * fm_ds[2], fm_ss[3]], axis=0)
         cnn_fm = tf.reshape(cnn_fm, fm_s)
         self.cnn_fmaps = cnn_fm
-        _dprint('{}: Final reshaped CNN feature map shape: {}'.format(
-                self.__class__.__name__, _shape(self.cnn_fmaps)))
         return self.im_embed, cnn_fm
     
     ###############
@@ -149,7 +130,7 @@ class ModelBase(object):
             im_embed = tf.contrib.seq2seq.tile_batch(im_embed, beam_size)
             cnn_fmaps = tf.contrib.seq2seq.tile_batch(cnn_fmaps, beam_size)
         
-        if align == 'add':
+        if align == 'add_LN':
             att_mech = rops.MultiHeadAddLN
         elif align == 'dot':
             att_mech = rops.MultiHeadDot
@@ -201,12 +182,6 @@ class ModelBase(object):
             logits, output_ids, attn_maps = self._decoder_post_process(
                                                             rnn_raw_outputs,
                                                             top_beam=True)
-            
-            _dprint('{}: Final attn_maps shape: {}'.format(
-                self.__class__.__name__, _shape(attn_maps)))
-            _dprint('{}: Logits shape: {}'.format(
-                self.__class__.__name__, _shape(logits)))
-        
         self.dec_preds = output_ids
         self.dec_logits = logits
         self.dec_attn_maps = attn_maps
@@ -244,7 +219,7 @@ class ModelBase(object):
                 cnn_fmaps = [tf.contrib.seq2seq.tile_batch(fm, beam_size)
                                                             for fm in cnn_fmaps]
         
-        if align == 'add':
+        if align == 'add_LN':
             att_mech = rops.MultiHeadAddLN
         elif align == 'dot':
             att_mech = rops.MultiHeadDot
@@ -297,9 +272,6 @@ class ModelBase(object):
             logits, output_ids, attn_maps = self._decoder_post_process(
                                                             rnn_raw_outputs,
                                                             top_beam=False)
-            _dprint('{}: Logits shape: {}'.format(
-                self.__class__.__name__, _shape(logits)))
-        
         self.dec_preds = output_ids
         self.dec_logits = logits
         self.dec_attn_maps = attn_maps
@@ -348,10 +320,6 @@ class ModelBase(object):
         map_s = tf.stack([map_s[0], map_s[1], c.attn_num_heads, -1], axis=0)
         attn_map = tf.reshape(attn_map, map_s)                # (seq_len, batch, num_heads, fm_size)
         attn_map = tf.transpose(attn_map, [1, 2, 0, 3])       # (batch, num_heads, seq_len, fm_size)
-        # Combine batch and attention head dimensions
-        #map_s = tf.shape(attn_map)
-        #map_s = tf.stack([map_s[0] * map_s[1], map_s[2], -1], axis=0)
-        #attn_map = tf.reshape(attn_map, map_s)                # (batch * num_heads, seq_len, fm_size)
         return logits, output_ids, attn_map
     
     
@@ -418,8 +386,6 @@ class ModelBase(object):
                                     exclude_patterns=None,
                                     reg_search=True)
             assert len(tvars) == len(tvars_enc + tvars_dec)
-            _dprint('{}: Trainable variables: {}'.format(
-                                        self.__class__.__name__, tvars))
             reg_loss = self._loss_regularisation(tvars)
             
             # Add losses
@@ -565,11 +531,6 @@ class ModelBase(object):
                 self._dec_sent_inputs = _dec_sent[:, :-1]
                 _dec_sent = tf.maximum(_dec_sent, 0)
             self._dec_sent_targets = _dec_sent[:, 1:]
-            
-            _dprint('{}: Encoder input shape: {}'.format(
-                    self.__class__.__name__, _shape(self._enc_inputs)))
-            _dprint('{}: Decoder sentence shape: {}'.format(
-                    self.__class__.__name__, _shape(self._dec_sent_inputs)))
     
     
     def _build_word_projections(self):
@@ -719,8 +680,6 @@ class ModelBase(object):
                                 output_dim=self._rnn_input_size,
                                 bias_init=None,
                                 activation_fn=None)
-                _dprint('{}: 0th time step input shape: {}'.format(
-                        self.__class__.__name__, _shape(sent_embeddings)))
                 initial_state = cell.zero_state(batch_size, dtype=tf.float32)
                 _, initial_state = cell(sent_embeddings, initial_state)
         else:
@@ -885,8 +844,6 @@ class ModelBase(object):
                         exclude_patterns=exc_scopes,
                         reg_search=True)
             print('INFO: Scopes freezed: {}'.format(exc_scopes))
-        for v in tvars:
-            _dprint('Trainable var name: {}'.format(v.op.name))
         return tvars
     
     

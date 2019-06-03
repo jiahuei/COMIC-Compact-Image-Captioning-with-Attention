@@ -93,8 +93,8 @@ def create_parser():
         '--attn_context_layer', type=bool, default=False,
         help='If True, add linear projection after multi-head attention.')
     parser.add_argument(
-        '--attn_alignment_method', type=str, default='add',
-        choices=['add', 'dot'],
+        '--attn_alignment_method', type=str, default='add_LN',
+        choices=['add_LN', 'dot'],
         help='Str, The alignment method / composition method.')
     parser.add_argument(
         '--attn_probability_fn', type=str, default='softmax',
@@ -167,6 +167,7 @@ if __name__ == '__main__':
         args.attn_keep_prob = 1.0
         args.lr_start = 1e-3
         args.lr_end = 2e-4
+        args.lr_reduce_every_n_epochs = 4
         args.adam_epsilon = 1e-6
     
     if args.run == 1:

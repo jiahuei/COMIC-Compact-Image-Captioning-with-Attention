@@ -1,0 +1,16 @@
+===================================
+model_compact-168245
+Beam size: 3
+===================================
+Bleu_1: 0.729
+Bleu_2: 0.566
+Bleu_3: 0.430
+Bleu_4: 0.328
+METEOR: 0.257
+ROUGE_L: 0.543
+CIDEr: 1.001
+SPICE: 0.185
+Perplexity (valid): N/A
+Perplexity (test): N/A
+
+

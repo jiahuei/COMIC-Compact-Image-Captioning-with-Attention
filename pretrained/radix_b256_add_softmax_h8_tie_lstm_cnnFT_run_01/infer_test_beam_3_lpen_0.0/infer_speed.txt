@@ -1,0 +1,5 @@
+Using GPU #: 1
+Inference batch size: 25
+Inference beam size: 3
+
+84.9769288355
