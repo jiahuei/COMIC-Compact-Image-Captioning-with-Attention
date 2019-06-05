@@ -35,10 +35,7 @@ def create_parser():
         '--infer_checkpoints', type=str, default='all',
         help='The checkpoint numbers to be evaluated. Comma-separated.')
     parser.add_argument(
-        '--annotations_file', type=str,
-        default=pjoin(
-            os.path.dirname(CURR_DIR), 'common', 'coco_caption',
-            'annotations', 'captions_val2014.json'),
+        '--annotations_file', type=str, default='captions_val2014.json',
         help='The annotations / reference file for calculating scores.')
     parser.add_argument(
         '--dataset_dir', type=str,
@@ -85,6 +82,10 @@ if __name__ == '__main__':
     os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu
     default_exp_dir = pjoin(os.path.dirname(CURR_DIR), 'experiments')
     args.infer_checkpoints_dir = pjoin(default_exp_dir, args.infer_checkpoints_dir)
+    
+    args.annotations_file = pjoin(
+            os.path.dirname(CURR_DIR),
+            'common', 'coco_caption', 'annotations', args.annotations_file)
     
     if args.infer_checkpoints == 'all':
         files = sorted(os.listdir(args.infer_checkpoints_dir), key=nat_key)
