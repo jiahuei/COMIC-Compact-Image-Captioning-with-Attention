@@ -53,6 +53,8 @@ and run all the dataset pre-processing scripts.
 
 
 ## Training the models
+Run `src/setup.sh` before proceeding with training.
+
 InstaPIC models can be trained via the flag `dataset_file_pattern`.
 
 ### COMIC-256
