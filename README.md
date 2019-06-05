@@ -4,7 +4,6 @@ Released on 03 June 2019.
 
 
 ## Description
-
 This is the code repo of our TMM 2019 work titled 
 ["COMIC: Towards A Compact Image Captioning Model with Attention"](https://arxiv.org/abs/1903.01072). 
 In this paper, we tackle the problem of compactness of image captioning models which is hitherto unexplored. 
@@ -12,9 +11,11 @@ We showed competitive results on both MS-COCO and InstaPIC-1.1M datasets despite
 
 <img src="TMM.png" height="200">
 
+**Some pre-trained model checkpoints are available at 
+[this repo](https://github.com/jiahuei/COMIC-Pretrained-Captioning-Models).**
+
 
 ## Citation
-
 If you find this repository useful for your research or work, please cite:
 
 ```
@@ -37,23 +38,6 @@ If you find this repository useful for your research or work, please cite:
 - requests >= 2.18.4
 
 
-## Project structure
-```
-.
-+-- common
-|   +-- {shared libraries and utility functions}
-+-- datasets
-|   +-- preprocessing
-|       +-- {dataset pre-processing scripts}
-+-- pretrained
-|   +-- {pre-trained checkpoints for some COMIC models. Details are provided in a separate README.}
-+-- src
-    +-- {main scripts}
-```
-
-Please note that some parts of this code may be subject to change.
-
-
 ## Running the code
 Assuming you are in the `src` folder:
 
@@ -65,42 +49,37 @@ and run all the dataset pre-processing scripts.
 3. Run the inference and evaluation script 
 `python infer.py --infer_checkpoints_dir mscoco/logdir`.
 
-Examples are given in `example.sh`.
+**Examples are given in `example.sh`.**
 
 
-## Training the models (MS-COCO)
+## Training the models
+InstaPIC models can be trained via the flag `dataset_file_pattern`.
+
 ### COMIC-256
 ```bash
+# MS-COCO
 python train.py
+
+# InstaPIC
+python train.py  \
+    --dataset_file_pattern 'insta_{}_v25595_s15'
 ```
 ### Baseline
 ```bash
+# MS-COCO
 python train.py  \
     --token_type 'word'  \
     --cnn_fm_projection 'none'  \
     --attn_num_heads 1
-```
-### Baseline-8
-```bash
+
+# InstaPIC
 python train.py  \
+    --dataset_file_pattern 'insta_{}_v25595_s15'  \
     --token_type 'word'  \
     --cnn_fm_projection 'none'  \
-    --attn_num_heads 8
-```
-### Baseline-SC
-```bash
-python train.py  \
-    --token_type 'word'  \
-    --cnn_fm_projection 'none'  \
-    --rnn_size 160  \
-    --rnn_word_size 128  \
     --attn_num_heads 1
 ```
-### InstaPIC models
-InstaPIC models can be trained by passing this additional argument:
-```bash
-    --dataset_file_pattern 'insta_{}_v25595_s15'
-```
+
 
 ## Avoid re-downloading datasets
 Re-downloading can be avoided by:
@@ -147,6 +126,23 @@ This code assumes the following dataset directory structures:
 ```
 
 
+## Project structure
+```
+.
++-- common
+|   +-- {shared libraries and utility functions}
++-- datasets
+|   +-- preprocessing
+|       +-- {dataset pre-processing scripts}
++-- pretrained
+|   +-- {pre-trained checkpoints for some COMIC models. Details are provided in a separate README.}
++-- src
+    +-- {main scripts}
+```
+
+Please note that some parts of this code may be subject to change.
+
+
 ## Differences compared to our paper
 To match the settings as described in our TMM paper, 
 set the `legacy` argument of `train.py` to `True` (the default is `False`). 
@@ -169,18 +165,27 @@ last training checkpoint of RNN training.
 
 ### Performance differences on MS-COCO
 
-| Default mode                  | BLEU-4    | CIDEr     | SPICE     |
-| -------------                 | --------- | --------- | --------- |
-| Baseline                      | 0.311     | 0.937     | 0.174     |
-| **COMIC-256**                 | 0.308     | 0.944     | 0.176     |
-| COMIC-256 (CNN fine-tune)     | 0.328     | 1.001     | 0.185     |
+| Default mode                  | Decoder params.   | BLEU-4    | CIDEr     | SPICE     |
+| -------------                 | ---------         | --------- | --------- | --------- |
+| Baseline                      | 12.7 M            | 0.311     | 0.937     | 0.174     |
+| **COMIC-256**                 |  4.3 M            | 0.308     | 0.944     | 0.176     |
+| (+ CNN fine-tune)             |                   | 0.328     | 1.001     | 0.185     |
 
-Please see [pretrained](https://github.com/jiahuei/COMIC-Compact-Image-Captioning-with-Attention/tree/master/pretrained) folder 
-for checkpoints of the COMIC models listed above.
+
+| Legacy mode                   | Decoder params.   | BLEU-4    | CIDEr     | SPICE     |
+| -------------                 | ---------         | --------- | --------- | --------- |
+| Baseline                      | 12.2 M            | 0.300     | 0.906     | 0.169     |
+|                               |                   | (0.296)   | (0.885)   | (0.167)   |
+| **COMIC-256**                 |  4.0 M            | 0.302     | 0.913     | 0.170     |
+|                               |                   | (0.292)   | (0.881)   | (0.164)   |
+
+Note that scores in brackets () indicate figures stated in our TMM paper.
+
+Please see [above](https://github.com/jiahuei/COMIC-Compact-Image-Captioning-with-Attention#description) 
+for info on downloading checkpoints of the models listed above.
 
 
 ## Main arguments
-
 ### train.py
 - `train_mode`: The training regime. Choices are `decoder`, `cnn_finetune`, `scst`. 
 All training starts with `decoder` mode (freezing the CNN).
@@ -229,6 +234,15 @@ To perform online server evaluation:
 3. Zip the files and submit.
 
 
+## Acknowledgements
+Thanks to the developers of:
+- [[coco-caption]](https://github.com/tylin/coco-caption/tree/3a9afb2682141a03e1cdc02b0df6770d2c884f6f)
+- [[ruotianluo/self-critical.pytorch]](https://github.com/ruotianluo/self-critical.pytorch/tree/77dff3223ba2fefe26047ff6ef560c2aa0e1f942)
+- [[ruotianluo/cider]](https://github.com/ruotianluo/cider/tree/dbb3960165d86202ed3c417b412a000fc8e717f3)
+- [[weili-ict/SelfCriticalSequenceTraining-tensorflow]](https://github.com/weili-ict/SelfCriticalSequenceTraining-tensorflow/tree/cddf3f99bbd5b7ed96c12c6415fb6ae641d4816f)
+- [[tensorflow]](https://github.com/tensorflow)
+
+
 ## Feedback
 Suggestions and opinions (both positive and negative) are greatly welcomed. 
 Please contact the authors by sending an email to 
@@ -238,7 +252,7 @@ Please contact the authors by sending an email to
 ## License and Copyright
 The project is open source under Apache-2.0 license (see the `LICENSE` file).
 
-&#169;2019 Center of Image and Signal Processing, 
+&#169; 2019 Center of Image and Signal Processing, 
 Faculty of Computer Science and Information Technology, University of Malaya.
 
 
