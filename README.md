@@ -6,28 +6,11 @@ Released on 03 June 2019.
 ## Description
 
 This is the code repo of our TMM 2019 work titled 
-["COMIC: Towards a Compact Image Captioning Model with Attention"](https://arxiv.org/abs/1903.01072). 
+["COMIC: Towards A Compact Image Captioning Model with Attention"](https://arxiv.org/abs/1903.01072). 
 In this paper, we tackle the problem of compactness of image captioning models which is hitherto unexplored. 
 We showed competitive results on both MS-COCO and InstaPIC-1.1M datasets despite having an embedding vocabularly size that is 39x-99x smaller.
 
 <img src="TMM.png" height="200">
-
-
-## Code structure
-```
-.
-+-- common
-|   +-- {shared libraries and utility functions}
-+-- datasets
-|   +-- preprocessing
-|       +-- {dataset pre-processing scripts}
-+-- pretrained
-|   +-- {pre-trained checkpoints for some COMIC models. Details are provided in a separate README.}
-+-- src
-    +-- {main scripts}
-```
-
-Please note that some parts of this code may be subject to change.
 
 
 ## Citation
@@ -52,6 +35,23 @@ If you find this repository useful for your research or work, please cite:
 - Pillow >= 3.1.2
 - packaging >= 19.0
 - requests >= 2.18.4
+
+
+## Project structure
+```
+.
++-- common
+|   +-- {shared libraries and utility functions}
++-- datasets
+|   +-- preprocessing
+|       +-- {dataset pre-processing scripts}
++-- pretrained
+|   +-- {pre-trained checkpoints for some COMIC models. Details are provided in a separate README.}
++-- src
+    +-- {main scripts}
+```
+
+Please note that some parts of this code may be subject to change.
 
 
 ## Running the code
@@ -175,8 +175,8 @@ last training checkpoint of RNN training.
 | **COMIC-256**                 | 0.308     | 0.944     | 0.176     |
 | COMIC-256 (CNN fine-tune)     | 0.328     | 1.001     | 0.185     |
 
-Please see [pretrained](https://github.com/jiahuei/COMIC-Towards-A-Compact-Image-Captioning-Model-with-Attention/tree/master/pretrained) folder 
-for checkpoints of COMIC models listed above.
+Please see [pretrained](https://github.com/jiahuei/COMIC-Compact-Image-Captioning-with-Attention/tree/master/pretrained) folder 
+for checkpoints of the COMIC models listed above.
 
 
 ## Main arguments
