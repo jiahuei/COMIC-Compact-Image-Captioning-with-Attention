@@ -1,5 +1,7 @@
 # COMIC: Towards a Compact Image Captioning Model with Attention
 
+Updated 06 June 2019 (Pre-trained model repo)
+
 Released on 03 June 2019.
 
 
