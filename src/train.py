@@ -180,7 +180,7 @@ if __name__ == '__main__':
     dataset = args.dataset_file_pattern.split('_')[0]
     log_root = pjoin(os.path.dirname(CURR_DIR), 'experiments', dataset)
     if args.dataset_dir == '':
-        args.dataset_dir = pjoin(CURR_DIR, 'datasets', dataset)
+        args.dataset_dir = pjoin(os.path.dirname(CURR_DIR), 'datasets', dataset)
     
     if args.token_type == 'radix':
         token = 'radix_b{}'.format(args.radix_base)
