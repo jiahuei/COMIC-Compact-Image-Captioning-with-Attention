@@ -254,7 +254,7 @@ Please contact the authors by sending an email to
 
 
 ## License and Copyright
-The project is open source under Apache-2.0 license (see the `LICENSE` file).
+The project is open source under BSD-3 license (see the `LICENSE` file).
 
 &#169; 2019 Center of Image and Signal Processing, 
 Faculty of Computer Science and Information Technology, University of Malaya.
