@@ -1,5 +1,7 @@
 # COMIC: Towards a Compact Image Captioning Model with Attention
 
+Updated on 12 June 2019 (Self-Critical Sequence Training (SCST))
+
 Updated on 06 June 2019 (Pre-trained model repo)
 
 Released on 03 June 2019.
@@ -165,7 +167,7 @@ last training checkpoint of RNN training.
 [[arxiv]](https://arxiv.org/abs/1512.05287)
 [[tf]](https://www.tensorflow.org/versions/r1.9/api_docs/python/tf/contrib/rnn/DropoutWrapper#methods)
 - Context layer (linear projection after attention)
-- SCST [[arxiv]](https://arxiv.org/abs/1612.00563) **(to be added soon)**
+- Self-Critical Sequence Training (SCST) [[arxiv]](https://arxiv.org/abs/1612.00563)
 
 ### Performance on MS-COCO (using Inception-V1 and LSTM)
 
