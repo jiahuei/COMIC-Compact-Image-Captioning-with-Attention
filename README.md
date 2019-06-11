@@ -188,6 +188,7 @@ last training checkpoint of RNN training.
 |                   |                   | (0.706)   | (0.292)   | (0.881)   | (0.164)   |
 
 Note that scores in brackets () indicate figures stated in our TMM paper.
+The differences are due to reimplementation from TF-1.2.
 
 Please see [above](https://github.com/jiahuei/COMIC-Compact-Image-Captioning-with-Attention#description) 
 for info on downloading checkpoints of the models listed above.
