@@ -43,46 +43,35 @@ def _baseN_arr_to_dec(baseN_array, base):
     return result
 
 
-def _radix_id_to_caption(ids, config):
-    """Convert base-N word IDs to words / sentence."""
+def id_to_caption(ids, config):
     captions = []
-    base = config.radix_base
-    vocab_size = len(config.itow)
-    word_len = len(ops.number_to_base(vocab_size, base))
-    for i in range(ids.shape[0]):
-        caption = []
-        row = [wid for wid in ids[i, :] if wid < base and wid >= 0]
-        if len(row) % word_len != 0:
-            row = row[:-1]
-        for j in range(0, len(row), word_len):
-            word_id = _baseN_arr_to_dec(row[j:j + word_len], base)
-            if word_id < vocab_size:
-                caption.append(config.itow[str(word_id)])
-            else:
-                pass
-        captions.append(' '.join(caption))
-    return captions
-
-
-def _word_id_to_caption(ids, config):
-    """Convert word IDs to words / sentence."""
-    captions = []
-    for i in range(ids.shape[0]):
-        row = [wid for wid in ids[i, :] 
-                if wid >= 0 and wid != config.wtoi['<EOS>']]
-        caption = [config.itow[str(w)] for w in row]
-        captions.append(' '.join(caption))
-    return captions
-
-
-def _char_id_to_caption(ids, config):
-    """Convert character IDs to words / sentence."""
-    captions = []
-    for i in range(ids.shape[0]):
-        row = [wid for wid in ids[i, :] 
-                if wid >= 0 and wid != config.wtoi['<EOS>']]
-        caption = [config.itow[str(w)] for w in row]
-        captions.append(''.join(caption))
+    if config.token_type == 'radix':
+        # Convert Radix IDs to sentence.
+        base = config.radix_base
+        vocab_size = len(config.itow)
+        word_len = len(ops.number_to_base(vocab_size, base))
+        for i in range(ids.shape[0]):
+            sent = []
+            row = [wid for wid in ids[i, :] if wid < base and wid >= 0]
+            if len(row) % word_len != 0:
+                row = row[:-1]
+            for j in range(0, len(row), word_len):
+                word_id = _baseN_arr_to_dec(row[j:j + word_len], base)
+                if word_id < vocab_size:
+                    sent.append(config.itow[str(word_id)])
+                else:
+                    pass
+            captions.append(' '.join(sent))
+    else:
+        # Convert word / char IDs to sentence.
+        for i in range(ids.shape[0]):
+            row = [wid for wid in ids[i, :] 
+                    if wid >= 0 and wid != config.wtoi['<EOS>']]
+            sent = [config.itow[str(w)] for w in row]
+            if config.token_type == 'word':
+                captions.append(' '.join(sent))
+            elif config.token_type == 'char':
+                captions.append(''.join(sent))
     return captions
 
 
@@ -93,13 +82,6 @@ def run_inference(config, curr_ckpt_path):
     
     ckpt_dir, ckpt_file = os.path.split(curr_ckpt_path)
     ckpt_num = P_CKPT.findall(ckpt_file)[0]             # Checkpoint number
-    
-    if config.token_type == 'radix':
-        _id_to_caption = _radix_id_to_caption
-    elif config.token_type == 'word':
-        _id_to_caption = _word_id_to_caption
-    elif config.token_type == 'char':
-        _id_to_caption = _char_id_to_caption
     
     # Setup input pipeline & Build model
     print('TensorFlow version: r{}'.format(tf.__version__))
@@ -146,7 +128,7 @@ def run_inference(config, curr_ckpt_path):
         desc = 'Inference: checkpoint {}'.format(ckpt_num)
         for step in tqdm(range(num_batches), desc=desc, ncols=100):
             word_ids, attn_maps = sess.run(m_infer.infer_output)
-            captions = _id_to_caption(word_ids, c)
+            captions = id_to_caption(word_ids, c)
             #attn_maps = np.split(attn_maps, batch_size)
             
             # Get image ids, compile results

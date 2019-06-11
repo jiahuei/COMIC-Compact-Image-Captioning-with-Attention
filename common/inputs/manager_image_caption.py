@@ -16,7 +16,8 @@ import json, string
 import random
 from nets import nets_factory
 from inputs.preprocessing import preprocessing_factory as prepro_factory
-sys.path.append(os.path.join(os.path.dirname(__file__), '../..', 'common'))
+CURR_DIR = os.path.dirname(os.path.realpath(__file__))
+sys.path.append(os.path.dirname(CURR_DIR))
 import ops
 _shape = ops.shape
 pjoin = os.path.join
@@ -245,6 +246,8 @@ class InputManager_Radix(InputManager):
                 idx = [c.radix_base]
             elif k == '<EOS>':
                 idx = [c.radix_base + 1]
+            elif k == '<PAD>':
+                idx = [-1]
             else:
                 idx = ops.number_to_base(c.wtoi[k], c.radix_base)
                 idx = [0] * (max_word_len - len(idx)) + idx
@@ -354,7 +357,7 @@ class InputManager_Char(InputManager):
                 print('INFO: Training data shuffled, idx {:3,d}'.format(idx))
 
 
-class InputManager_SCST(InputManager):
+class InputManager_SCST(InputManager_Radix):
     """ Input Manager object."""
     
     def __init__(self, config, is_inference=False):
@@ -469,6 +472,41 @@ class InputManager_SCST(InputManager):
             if is_training:
                 random.shuffle(data)
                 print('INFO: Training data shuffled, idx {:3,d}'.format(idx))
+    
+    
+    def captions_to_batched_ids(self, hypos):
+        """
+        Generates batched IDs with padding for SCST training.
+        Used as GT for XE objective.
+        """
+        c = self.config
+        assert c.token_type in ['radix', 'word', 'char']
+        
+        hypos_idx = []
+        for h in hypos:
+            if c.token_type == 'radix':
+                h = ['<GO>'] + h[0].split() + ['<EOS>']
+                h = [self.radix_wtoi.get(w, self.radix_wtoi['<UNK>']) for w in h]
+                h = np.concatenate(h)
+            elif c.token_type == 'word':
+                h = ['<GO>'] + h[0].split() + ['<EOS>']
+                h = [c.wtoi.get(w, c.wtoi['<UNK>']) for w in h]
+                h = np.array(h)
+            elif c.token_type == 'char':
+                h = [c.wtoi[ch] for ch in h[0]]
+                h = [c.wtoi['<GO>']] + h + [c.wtoi['<EOS>']]
+                h = np.array(h)
+            hypos_idx.append(h)
+        
+        assert len(hypos_idx[0].shape) == 1
+        max_hypo_len = max([hy.shape[0] for hy in hypos_idx])
+        assert max_hypo_len > 1
+        for i, h in enumerate(hypos_idx):
+            h = np.pad(h, pad_width=[0, max_hypo_len - len(h)],
+                       mode='constant', constant_values=c.wtoi['<PAD>'])
+            hypos_idx[i] = h
+        hypos_idx = np.stack(hypos_idx, axis=0)
+        return hypos_idx
 
 
 

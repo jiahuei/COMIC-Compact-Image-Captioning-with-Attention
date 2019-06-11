@@ -140,11 +140,7 @@ class ModelBase(object):
         if prob == 'softmax':
             prob_fn = tf.nn.softmax
         elif prob == 'sigmoid':
-            def _signorm(tn):
-                tn = tf.nn.sigmoid(tn)
-                tn_sum = tf.reduce_sum(tn, axis=-1)
-                return tn / tn_sum
-            prob_fn = _signorm
+            prob_fn = self._signorm
         else:
             raise ValueError('Invalid alignment method.')
         
@@ -216,8 +212,7 @@ class ModelBase(object):
                 c.infer_length_penalty_weight = 0
                 # Tile the batch dimension in preparation for Beam Search
                 im_embed = tf.contrib.seq2seq.tile_batch(im_embed, beam_size)
-                cnn_fmaps = [tf.contrib.seq2seq.tile_batch(fm, beam_size)
-                                                            for fm in cnn_fmaps]
+                cnn_fmaps = tf.contrib.seq2seq.tile_batch(cnn_fmaps, beam_size)
         
         if align == 'add_LN':
             att_mech = rops.MultiHeadAddLN
@@ -229,11 +224,7 @@ class ModelBase(object):
         if prob == 'softmax':
             prob_fn = tf.nn.softmax
         elif prob == 'sigmoid':
-            def _signorm(tn):
-                tn = tf.nn.sigmoid(tn)
-                tn_sum = tf.reduce_sum(tn, axis=-1)
-                return tn / tn_sum
-            prob_fn = _signorm
+            prob_fn = self._signorm
         else:
             raise ValueError('Invalid alignment method.')
         
@@ -375,17 +366,17 @@ class ModelBase(object):
             
             # Maybe L2 regularisation
             tvars = self._get_trainable_vars()
-            tvars_enc = tf.contrib.framework.filter_variables(
+            tvars_cnn = tf.contrib.framework.filter_variables(
                                     var_list=tvars,
-                                    include_patterns=['Model/encoder'],
+                                    include_patterns=['Model/encoder/cnn'],
                                     exclude_patterns=None,
                                     reg_search=True)
             tvars_dec = tf.contrib.framework.filter_variables(
                                     var_list=tvars,
-                                    include_patterns=['Model/decoder'],
-                                    exclude_patterns=None,
+                                    include_patterns=['Model'],
+                                    exclude_patterns=['Model/encoder/cnn'],
                                     reg_search=True)
-            assert len(tvars) == len(tvars_enc + tvars_dec)
+            assert len(tvars) == len(tvars_cnn + tvars_dec)
             reg_loss = self._loss_regularisation(tvars)
             
             # Add losses
@@ -394,10 +385,10 @@ class ModelBase(object):
         
         # Training op for captioning model
         with tf.variable_scope('optimise/caption'):
-            #if c.freeze_scopes == '':
-            if False:
-                multipliers = dict(zip(tvars_enc, [0.1] * len(tvars_enc)) +
-                                   zip(tvars_dec, [1.0] * len(tvars_dec)))
+            if c.cnn_grad_multiplier != 1.0:
+                multipliers = dict(
+                    zip(tvars_cnn, [c.cnn_grad_multiplier] * len(tvars_cnn)) +
+                    zip(tvars_dec, [1.0] * len(tvars_dec)))
             else:
                 multipliers = None
             train_cap = tf.contrib.slim.learning.create_train_op(
@@ -454,9 +445,11 @@ class ModelBase(object):
                 exc_scopes = None
                         
             if model_vars.issubset(ckpt_vars):
-                if exc_scopes == None and model_vars == ckpt_vars:
+                if exc_scopes == None and c.resume_training:
                     # Restore whole model (resume training)
                     saver.restore(session, checkpoint_path)
+                    print('INFO: Resume training from checkpoint: {}'.format(
+                        checkpoint_path))
                 else:
                     # Restore whole model (fine-tune)
                     var_list = tf.get_collection(
@@ -469,7 +462,8 @@ class ModelBase(object):
                                 reg_search=True)
                     _saver = tf.train.Saver(var_list)
                     _saver.restore(session, checkpoint_path)
-                print('INFO: Restored entire model from checkpoint.')
+                    print('INFO: Restored `Model` from checkpoint: {}'.format(
+                        checkpoint_path))
             else:
                 # Restore CNN model
                 cnn_scope = 'Model/encoder/cnn/'
@@ -484,7 +478,8 @@ class ModelBase(object):
                 cnn_variables = dict(zip(var_name, var_list))
                 cnn_saver = tf.train.Saver(cnn_variables)
                 cnn_saver.restore(session, checkpoint_path)
-                print('INFO: Restored CNN model from checkpoint.')
+                print('INFO: Restored CNN model from checkpoint {}'.format(
+                        checkpoint_path))
          
         if self.is_training():
             if lr is None:
@@ -600,6 +595,13 @@ class ModelBase(object):
     
     ###################
     ### RNN helpers ###
+    
+    def _signorm(self, tn):
+        with tf.variable_scope('sig_norm'):
+            tn = tf.nn.sigmoid(tn)
+            tn_sum = tf.reduce_sum(tn, axis=-1, keepdims=True)
+            return tn / tn_sum
+    
     
     def _get_rnn_cell(self, rnn_size):
         """Helper to select RNN cell(s)."""

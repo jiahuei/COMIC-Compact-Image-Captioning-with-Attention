@@ -30,41 +30,48 @@ except ImportError:
     natsorted = None
 
 
-def maybe_download_from_url(url, dest_dir):
+def maybe_download_from_url(url, dest_dir, wget=True, file_size=None):
     """
     Downloads file from URL, streaming large files.
     """
-    #url = 'http://download.tensorflow.org/models/inception_v1_2016_08_28.tar.gz'
-    response = requests.get(url, stream=True)
-    #chunk_size = 1024 * 512         # 512 kB
-    chunk_size = 1024 ** 2          # 1 MB
     fname = url.split('/')[-1]
-    
     if not os.path.exists(dest_dir):
         os.makedirs(dest_dir)
     fpath = pjoin(dest_dir, fname)
     if os.path.isfile(fpath):
         print('INFO: Found file `{}`'.format(fname))
         return fpath
-    
-    if response.ok:
-        print('INFO: Downloading `{}`'.format(fname))
+    if wget:
+        import subprocess
+        subprocess.call(['wget', url], cwd=dest_dir)
     else:
-        print('ERROR: Download error. Server response: {}'.format(response))
-        return False
-    time.sleep(0.2)
-    
-    # Case-insensitive Dictionary of Response Headers.
-    # The length of the request body in octets (8-bit bytes).
-    file_size = int(response.headers['Content-Length'])
-    num_iters = math.ceil(file_size / chunk_size)
-    tqdm_kwargs = dict(desc = 'Download progress',
-                       total = num_iters,
-                       unit = 'MB')
-    with open(fpath, 'wb') as handle:
-        for chunk in tqdm(response.iter_content(chunk_size), **tqdm_kwargs):
-            if not chunk: break
-            handle.write(chunk)
+        import requests
+        response = requests.get(url, stream=True)
+        chunk_size = 1024 ** 2          # 1 MB
+        if response.ok:
+            print('INFO: Downloading `{}`'.format(fname))
+        else:
+            print('ERROR: Download error. Server response: {}'.format(response))
+            return False
+        time.sleep(0.2)
+        
+        # Case-insensitive Dictionary of Response Headers.
+        # The length of the request body in octets (8-bit bytes).
+        try:
+            file_size = int(response.headers['Content-Length'])
+        except:
+            pass
+        if file_size is None:
+            num_iters = None
+        else:
+            num_iters = math.ceil(file_size / chunk_size)
+        tqdm_kwargs = dict(desc = 'Download progress',
+                           total = num_iters,
+                           unit = 'MB')
+        with open(fpath, 'wb') as handle:
+            for chunk in tqdm(response.iter_content(chunk_size), **tqdm_kwargs):
+                if not chunk: break
+                handle.write(chunk)
     print('INFO: Download complete: `{}`'.format(fname))
     return fpath
 

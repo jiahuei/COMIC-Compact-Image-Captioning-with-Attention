@@ -284,6 +284,7 @@ if __name__ == '__main__':
     
     
     ### Get the image files ###
+    print('INFO: Checking image files.')
     img_all = train_set.union(valid_set).union(test_set)
     ex = []
     if os.path.exists(pjoin(dset_dir, 'images')):

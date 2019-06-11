@@ -72,8 +72,8 @@ class CaptionModel(ModelBase):
             return None
         
         # Log softmax temperature value
-        t = tf.get_collection('softmax_temperatures')[0]
-        tf.summary.scalar('softmax_temperature', t)
+        t = tf.get_collection('softmax_temperatures')
+        if len(t) > 0: tf.summary.scalar('softmax_temperature', t[0])
         self.summary_op = tf.summary.merge_all()
         print('INFO: Model `{}` initialisation complete.'.format(mode))
 
@@ -85,7 +85,7 @@ class CaptionModel_SCST(ModelBase):
                  scst_mode,
                  reuse=False):
         assert scst_mode in ['train', 'sample']
-        assert config.lang_model == 'word'
+        #assert config.token_type == 'word'
         
         print('INFO: Building graph for: {}'.format(scst_mode))
         super(CaptionModel_SCST, self).__init__(config)
@@ -136,12 +136,12 @@ class CaptionModel_SCST(ModelBase):
         # Generated captions can be obtained by calling self.dec_preds
         
         # We place the optimisation graph out of 'Model' scope
-        self.train_scst = self._train_scst_caption_model()
+        self.train_scst = self._train_caption_model(scst=True)
         
         
         # Log softmax temperature value
-        t = tf.get_collection('softmax_temperatures')[0]
-        tf.summary.scalar('softmax_temperature', t)
+        t = tf.get_collection('softmax_temperatures')
+        if len(t) > 0: tf.summary.scalar('softmax_temperature', t[0])
         self.summary_op = tf.summary.merge_all()
         print('INFO: Model `{}` initialisation complete.'.format(scst_mode))
     

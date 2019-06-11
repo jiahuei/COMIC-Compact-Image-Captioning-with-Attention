@@ -165,6 +165,7 @@ if __name__ == '__main__':
     
     
     ### Get the image files ###
+    print('INFO: Checking image files.')
     img_all = train_set.union(valid_set).union(test_set)
     tpath = pjoin(dset_dir, 'train2014')
     vpath = pjoin(dset_dir, 'val2014')

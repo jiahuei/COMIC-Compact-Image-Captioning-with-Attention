@@ -147,8 +147,8 @@ This code assumes the following dataset directory structures:
 Please note that some parts of this code may be subject to change.
 
 
-## Differences compared to our paper
-To match the settings as described in our TMM paper, 
+## Differences compared to our TMM paper
+To match the settings as described in our paper, 
 set the `legacy` argument of `train.py` to `True` (the default is `False`). 
 This will override some of the provided arguments.
 
@@ -169,19 +169,19 @@ last training checkpoint of RNN training.
 
 ### Performance differences on MS-COCO
 
-| Default mode                  | Decoder params.   | BLEU-4    | CIDEr     | SPICE     |
-| -------------                 | ---------         | --------- | --------- | --------- |
-| Baseline                      | 12.7 M            | 0.311     | 0.937     | 0.174     |
-| **COMIC-256**                 |  4.3 M            | 0.308     | 0.944     | 0.176     |
-| (+ CNN fine-tune)             |                   | 0.328     | 1.001     | 0.185     |
+| Default mode      | Decoder params.   | BLEU-4    | CIDEr     | SPICE     |
+| -------------     | ---------         | --------- | --------- | --------- |
+| Baseline          | 12.7 M            | 0.311     | 0.937     | 0.174     |
+| **COMIC-256**     |  4.3 M            | 0.308     | 0.944     | 0.176     |
+| (+ CNN fine-tune) |                   | 0.328     | 1.001     | 0.185     |
 
 
-| Legacy mode                   | Decoder params.   | BLEU-4    | CIDEr     | SPICE     |
-| -------------                 | ---------         | --------- | --------- | --------- |
-| Baseline                      | 12.2 M            | 0.300     | 0.906     | 0.169     |
-|                               |                   | (0.296)   | (0.885)   | (0.167)   |
-| **COMIC-256**                 |  4.0 M            | 0.302     | 0.913     | 0.170     |
-|                               |                   | (0.292)   | (0.881)   | (0.164)   |
+| Legacy mode       | Decoder params.   | BLEU-4    | CIDEr     | SPICE     |
+| -------------     | ---------         | --------- | --------- | --------- |
+| Baseline          | 12.2 M            | 0.300     | 0.906     | 0.169     |
+|                   |                   | (0.296)   | (0.885)   | (0.167)   |
+| **COMIC-256**     |  4.0 M            | 0.302     | 0.913     | 0.170     |
+|                   |                   | (0.292)   | (0.881)   | (0.164)   |
 
 Note that scores in brackets () indicate figures stated in our TMM paper.
 
