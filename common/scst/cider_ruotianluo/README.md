@@ -30,7 +30,7 @@ To enable the IDF mode "coco-val-df":
 
 ## References & Acknowledgments
 To see the code differences, refer to this fork:
-- [[jiahuei/cider]](https://github.com/jiahuei/cider/tree/04ffd3387eec051afd12bb4785da73483b80c406)
+- [[jiahuei/cider]](https://github.com/jiahuei/cider)
 
 Thanks to the developers of:
 - [[ruotianluo/cider]](https://github.com/ruotianluo/cider/tree/dbb3960165d86202ed3c417b412a000fc8e717f3)
