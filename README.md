@@ -167,21 +167,23 @@ last training checkpoint of RNN training.
 - Context layer (linear projection after attention)
 - SCST [[arxiv]](https://arxiv.org/abs/1612.00563) **(to be added soon)**
 
-### Performance differences on MS-COCO
+### Performance on MS-COCO (using Inception-V1 and LSTM)
 
-| Default mode      | Decoder params.   | BLEU-4    | CIDEr     | SPICE     |
-| -------------     | ---------         | --------- | --------- | --------- |
-| Baseline          | 12.7 M            | 0.311     | 0.937     | 0.174     |
-| **COMIC-256**     |  4.3 M            | 0.308     | 0.944     | 0.176     |
-| (+ CNN fine-tune) |                   | 0.328     | 1.001     | 0.185     |
+| Default mode      | Decoder params.   | BLEU-1    | BLEU-4    | CIDEr     | SPICE     |
+| -------------     | ---------         | --------- | --------- | --------- | --------- |
+| Baseline          | 12.7 M            | 0.716     | 0.311     | 0.937     | 0.174     |
+| **COMIC-256**     |  4.3 M            | 0.713     | 0.308     | 0.944     | 0.176     |
+| (+ CNN fine-tune) |                   | 0.729     | 0.328     | 1.001     | 0.185     |
+| (+ SCST ^)        |                   | 0.753     | 0.344     | 1.050     | 0.190     |
 
+^ SCST using beam search sampling strategy as described in [this paper](https://arxiv.org/abs/1707.07998).
 
-| Legacy mode       | Decoder params.   | BLEU-4    | CIDEr     | SPICE     |
-| -------------     | ---------         | --------- | --------- | --------- |
-| Baseline          | 12.2 M            | 0.300     | 0.906     | 0.169     |
-|                   |                   | (0.296)   | (0.885)   | (0.167)   |
-| **COMIC-256**     |  4.0 M            | 0.302     | 0.913     | 0.170     |
-|                   |                   | (0.292)   | (0.881)   | (0.164)   |
+| Legacy mode       | Decoder params.   | BLEU-1    | BLEU-4    | CIDEr     | SPICE     |
+| -------------     | ---------         | --------- | --------- | --------- | --------- |
+| Baseline          | 12.2 M            | 0.707     | 0.300     | 0.906     | 0.169     |
+|                   |                   | (0.701)   | (0.296)   | (0.885)   | (0.167)   |
+| **COMIC-256**     |  4.0 M            | 0.711     | 0.302     | 0.913     | 0.170     |
+|                   |                   | (0.706)   | (0.292)   | (0.881)   | (0.164)   |
 
 Note that scores in brackets () indicate figures stated in our TMM paper.
 
@@ -211,6 +213,10 @@ All training starts with `decoder` mode (freezing the CNN).
 - `attn_context_layer`: If `True`, add linear projection after multi-head attention.
 - `attn_alignment_method`: Alignment / composition method. Choices are `add_LN`, `dot`.
 - `attn_probability_fn`: Attention map probability function. Choices are `softmax`, `sigmoid`.
+
+- `scst_beam_size`: The beam size for SCST sampling.
+- `scst_weight_ciderD`: The weight for CIDEr-D metric during SCST training.
+- `scst_weight_bleu`: The weight for BLEU metrics during SCST training.
 
 ### infer.py
 - `infer_set`: The split to perform inference on. Choices are `test`, `valid`, `coco_test`, `coco_valid`.

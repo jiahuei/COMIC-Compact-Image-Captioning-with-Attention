@@ -129,8 +129,20 @@ def create_parser():
         '--lr_end', type=float, default=1e-5,
         help='Float, determines the ending learning rate.')
     parser.add_argument(
+        '--cnn_grad_multiplier', type=float, default=1.0,
+        help='Float, determines the gradient multiplier when back-prop thru CNN.')
+    parser.add_argument(
         '--adam_epsilon', type=float, default=1e-2,
         help='Float, determines the epsilon value of ADAM.')
+    parser.add_argument(
+        '--scst_beam_size', type=int, default=7,
+        help='The beam size for SCST sampling.')
+    parser.add_argument(
+        '--scst_weight_ciderD', type=float, default=1.0,
+        help='The weight for CIDEr-D metric during SCST training.')
+    parser.add_argument(
+        '--scst_weight_bleu', type=str, default='0,0,0,2',
+        help='The weight for BLEU metrics during SCST training.')
     
     parser.add_argument(
         '--freeze_scopes', type=str, default='Model/encoder/cnn',
@@ -163,11 +175,26 @@ if __name__ == '__main__':
     
     if args.legacy:
         print('LEGACY mode enabled. Some arguments will be overridden.')
+        args.cnn_name = 'inception_v1'
+        args.cnn_input_size = '224,224'
+        args.cnn_input_augment = True
+        args.cnn_fm_attention = 'Mixed_4f'
+        args.rnn_name = 'LSTM'
+        args.rnn_size = 512
+        args.rnn_word_size = 256
         args.rnn_init_method = 'project_hidden'
+        args.rnn_recurr_dropout = False
+        args.attn_context_layer = False
+        args.attn_alignment_method = 'add_LN'
+        args.attn_probability_fn = 'softmax'
         args.attn_keep_prob = 1.0
         args.lr_start = 1e-3
         args.lr_end = 2e-4
         args.lr_reduce_every_n_epochs = 4
+        args.cnn_grad_multiplier = 1.0
+        args.initialiser = 'xavier'
+        args.optimiser = 'adam'
+        args.batch_size_train = 32
         args.adam_epsilon = 1e-6
     
     if args.run == 1:
@@ -199,10 +226,10 @@ if __name__ == '__main__':
     
     dec_dir = pjoin(log_root, '{}_run_{:02d}'.format(name, args.run))
     cnnft_dir = pjoin(log_root, '{}_cnnFT_run_{:02d}'.format(name, args.run))
-    scst_dir= pjoin(log_root, '{}_cnnFT_SCST_run_{:02d}'.format(name, args.run))
     train_fn = train.train_fn
     
     if args.train_mode == 'decoder':
+        assert args.freeze_scopes == 'Model/encoder/cnn'
         # Maybe download weights
         net = net_params.get_net_params(args.cnn_name)
         utils.maybe_get_ckpt_file(net)
@@ -212,6 +239,8 @@ if __name__ == '__main__':
     elif args.train_mode == 'cnn_finetune':
         # CNN fine-tune
         if args.legacy: raise NotImplementedError
+        if not os.path.exists(dec_dir):
+            raise ValueError('Decoder training log path not found: {}'.format(dec_dir))
         args.lr_start = 1e-3
         args.max_epoch = 10
         args.freeze_scopes = ''
@@ -221,7 +250,20 @@ if __name__ == '__main__':
     elif args.train_mode == 'scst':
         # SCST fine-tune (after CNN fine-tune)
         if args.legacy: raise NotImplementedError
+        if not os.path.exists(cnnft_dir):
+            raise ValueError('CNN finetune log path not found: {}'.format(cnnft_dir))
+        args.scst_weight_bleu = [float(w) for w in args.scst_weight_bleu.split(',')]
+        args.batch_size_train = 10
+        args.lr_start = 1e-3
+        args.max_epoch = 10
+        args.freeze_scopes = 'Model/encoder/cnn'
         args.checkpoint_path = cnnft_dir
+        scst = 'beam_{}_CrD_{}_B1_{}_B4_{}'.format(
+                    args.scst_beam_size,
+                    args.scst_weight_ciderD,
+                    args.scst_weight_bleu[0], args.scst_weight_bleu[-1])
+        scst_dir= pjoin(log_root, '{}_cnnFT_SCST_{}_run_{:02d}'.format(
+                                            name, scst, args.run))
         log_path = scst_dir
         train_fn = train.train_fn_scst
     
@@ -263,7 +305,7 @@ if __name__ == '__main__':
     ###
     
     train.try_to_train(
-            train_fn = train.train_fn,
+            train_fn = train_fn,
             try_block = True,
             overwrite = overwrite,
             **kwargs)
