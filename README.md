@@ -43,47 +43,57 @@ If you find this repository useful for your research or work, please cite:
 
 
 ## Running the code
-Assuming you are in the `src` folder:
+**More examples are given in `example.sh`.**
 
-1. Run `setup.sh`. This will download the required Stanford models 
+### First setup
+Run `./src/setup.sh`. This will download the required Stanford models 
 and run all the dataset pre-processing scripts.
 
-2. Run the training script `python train.py`.
+### Training models
+The training scheme is as follows:
+1. Start with `decoder` mode (freezing the CNN)
+1. Followed by `cnn_finetune` mode
+1. Finally, `scst` mode
 
-3. Run the inference and evaluation script 
-`python infer.py --infer_checkpoints_dir mscoco/logdir`.
-
-**Examples are given in `example.sh`.**
-
-
-## Training the models
-Run `src/setup.sh` before proceeding with training.
-
-InstaPIC models can be trained via the flag `dataset_file_pattern`.
-
-### COMIC-256
+#### COMIC-256
 ```bash
 # MS-COCO
-python train.py
+for mode in 'decoder' 'cnn_finetune' 'scst'
+do
+    python train.py  \
+        --train_mode ${mode}
+done
 
 # InstaPIC
-python train.py  \
-    --dataset_file_pattern 'insta_{}_v25595_s15'
+for mode in 'decoder' 'cnn_finetune' 'scst'
+do
+    python train.py  \
+        --train_mode ${mode}  \
+        --dataset_file_pattern 'insta_{}_v25595_s15'
+done
 ```
-### Baseline
+#### Baseline
 ```bash
 # MS-COCO
-python train.py  \
-    --token_type 'word'  \
-    --cnn_fm_projection 'none'  \
-    --attn_num_heads 1
+for mode in 'decoder' 'cnn_finetune' 'scst'
+do
+    python train.py  \
+        --train_mode ${mode}  \
+        --token_type 'word'  \
+        --cnn_fm_projection 'none'  \
+        --attn_num_heads 1
+done
 
 # InstaPIC
-python train.py  \
-    --dataset_file_pattern 'insta_{}_v25595_s15'  \
-    --token_type 'word'  \
-    --cnn_fm_projection 'none'  \
-    --attn_num_heads 1
+for mode in 'decoder' 'cnn_finetune' 'scst'
+do
+    python train.py  \
+        --train_mode ${mode}  \
+        --dataset_file_pattern 'insta_{}_v25595_s15'  \
+        --token_type 'word'  \
+        --cnn_fm_projection 'none'  \
+        --attn_num_heads 1
+done
 ```
 
 
@@ -145,8 +155,6 @@ This code assumes the following dataset directory structures:
 +-- src
     +-- {main scripts}
 ```
-
-Please note that some parts of this code may be subject to change.
 
 
 ## Differences compared to our TMM paper
