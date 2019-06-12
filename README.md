@@ -96,6 +96,21 @@ do
 done
 ```
 
+### Inferencing
+Just point `infer.py` to the directory containing the checkpoints. 
+Model configurations are loaded from `config.pkl`.
+
+```bash
+# MS-COCO
+python infer.py  \
+	--infer_checkpoints_dir 'mscoco/word_add_softmax_h8_tie_lstm_run_01'
+
+# InstaPIC
+python infer.py  \
+	--infer_checkpoints_dir 'insta/word_add_softmax_h8_ind_lstm_run_01'  \
+	--annotations_file 'insta_testval_raw.json'
+```
+
 
 ## Avoid re-downloading datasets
 Re-downloading can be avoided by:
