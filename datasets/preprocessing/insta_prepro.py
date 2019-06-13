@@ -25,7 +25,7 @@ pjoin = os.path.join
 #itow_file = 'insta_itow_w5_s15_split.json'
 
 # For tokenization
-# https://github.com/cesc-park/attend2u/blob/master/scripts/generate_dataset.py
+# https://github.com/cesc-park/attend2u/blob/c1185e550c72f71daa74a6ac95791cbf33363b27/scripts/generate_dataset.py
 try:
     # UCS-4
     EMOTICON = re.compile(u'(([\U00002600-\U000027BF])|([\U0001f300-\U0001f64F])|([\U0001f680-\U0001f6FF]))')

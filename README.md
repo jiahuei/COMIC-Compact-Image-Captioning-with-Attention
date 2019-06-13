@@ -218,45 +218,46 @@ for info on downloading checkpoints of the models listed above.
 
 
 ## Main arguments
-### train.py
-- `train_mode`: The training regime. Choices are `decoder`, `cnn_finetune`, `scst`. 
-All training starts with `decoder` mode (freezing the CNN).
-- `legacy`: If `True`, will match settings as described in paper.
-- `token_type`: Language model. Choices are `radix`, `word`, `char`.
-- `radix_base`: Base value for Radix models.
-- `cnn_name`: CNN model name.
-- `cnn_input_size`: CNN input size.
-- `cnn_fm_attention`: End point name of feature map for attention.
-- `cnn_fm_projection`: Feature map projection method. Choices are `none`, `independent`, `tied`.
-    
-- `rnn_name`: Type of RNN. Choices are `LSTM`, `LN_LSTM`, `GRU`.
-- `rnn_size`: Number of RNN units.
-- `rnn_word_size`: Size of word embedding.
-- `rnn_init_method`: RNN init method. Choices are `project_hidden`, `first_input`.
-- `rnn_recurr_dropout`: If `True`, enable variational recurrent dropout.
-    
-- `attn_num_heads`: Number of attention heads.
-- `attn_context_layer`: If `True`, add linear projection after multi-head attention.
-- `attn_alignment_method`: Alignment / composition method. Choices are `add_LN`, `dot`.
-- `attn_probability_fn`: Attention map probability function. Choices are `softmax`, `sigmoid`.
+#### train.py
+- Main:
+    - `train_mode`: The training regime. Choices are `decoder`, `cnn_finetune`, `scst`.
+    - `token_type`: Language model. Choices are `word`, `radix`, `char`.
+    - `legacy`: If `True`, will match settings as described in paper.
+- CNN:
+    - `cnn_name`: CNN model name.
+    - `cnn_input_size`: CNN input size.
+    - `cnn_fm_attention`: End point name of feature map for attention.
+    - `cnn_fm_projection`: Feature map projection method. Choices are `none`, `independent`, `tied`.
+- RNN:
+    - `rnn_name`: Type of RNN. Choices are `LSTM`, `LN_LSTM`, `GRU`.
+    - `rnn_size`: Number of RNN units.
+    - `rnn_word_size`: Size of word embedding.
+    - `rnn_init_method`: RNN init method. Choices are `project_hidden`, `first_input`.
+    - `rnn_recurr_dropout`: If `True`, enable variational recurrent dropout.
+- Attention:
+    - `attn_num_heads`: Number of attention heads.
+    - `attn_context_layer`: If `True`, add linear projection after multi-head attention.
+    - `attn_alignment_method`: Alignment / composition method. Choices are `add_LN`, `dot`.
+    - `attn_probability_fn`: Attention map probability function. Choices are `softmax`, `sigmoid`.
+- SCST:
+    - `scst_beam_size`: The beam size for SCST sampling.
+    - `scst_weight_ciderD`: The weight for CIDEr-D metric during SCST training.
+    - `scst_weight_bleu`: The weight for BLEU metrics during SCST training.
 
-- `scst_beam_size`: The beam size for SCST sampling.
-- `scst_weight_ciderD`: The weight for CIDEr-D metric during SCST training.
-- `scst_weight_bleu`: The weight for BLEU metrics during SCST training.
-
-### infer.py
-- `infer_set`: The split to perform inference on. Choices are `test`, `valid`, `coco_test`, `coco_valid`.
-`coco_test` and `coco_valid` are for inferencing on the whole 
-`test2014` and `val2014` sets respectively. 
-These are used for MS-COCO online server evaluation.
-- `infer_checkpoints_dir`: Directory containing the checkpoint files.
-- `infer_checkpoints`: Checkpoint numbers to be evaluated. Comma-separated.
-- `annotations_file`: Annotations / reference file for calculating scores.
-
-- `infer_beam_size`: Beam size of beam search. Pass `1` for greedy search.
-- `infer_length_penalty_weight`: Length penalty weight used in beam search.
-- `infer_max_length`: Maximum caption length allowed during inference.
-- `batch_size_infer`: Inference batch size for parallelism.
+#### infer.py
+- Main:
+    - `infer_set`: The split to perform inference on. Choices are `test`, `valid`, `coco_test`, `coco_valid`.
+    `coco_test` and `coco_valid` are for inferencing on the whole 
+    `test2014` and `val2014` sets respectively. 
+    These are used for MS-COCO online server evaluation.
+    - `infer_checkpoints_dir`: Directory containing the checkpoint files.
+    - `infer_checkpoints`: Checkpoint numbers to be evaluated. Comma-separated.
+    - `annotations_file`: Annotations / reference file for calculating scores.
+- Inference parameters:
+    - `infer_beam_size`: Beam size of beam search. Pass `1` for greedy search.
+    - `infer_length_penalty_weight`: Length penalty weight used in beam search.
+    - `infer_max_length`: Maximum caption length allowed during inference.
+    - `batch_size_infer`: Inference batch size for parallelism.
 
 
 ## Microsoft COCO Caption Evaluation
@@ -272,6 +273,7 @@ To perform online server evaluation:
 
 ## Acknowledgements
 Thanks to the developers of:
+- [[attend2u]](https://github.com/cesc-park/attend2u/tree/c1185e550c72f71daa74a6ac95791cbf33363b27)
 - [[coco-caption]](https://github.com/tylin/coco-caption/tree/3a9afb2682141a03e1cdc02b0df6770d2c884f6f)
 - [[ruotianluo/self-critical.pytorch]](https://github.com/ruotianluo/self-critical.pytorch/tree/77dff3223ba2fefe26047ff6ef560c2aa0e1f942)
 - [[ruotianluo/cider]](https://github.com/ruotianluo/cider/tree/dbb3960165d86202ed3c417b412a000fc8e717f3)
