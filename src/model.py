@@ -18,11 +18,6 @@ import ops
 _shape = ops.shape
 
 
-_DEBUG = False
-def _dprint(string):
-    return ops.dprint(string, _DEBUG)
-
-
 class CaptionModel(ModelBase):
     
     def __init__(self,

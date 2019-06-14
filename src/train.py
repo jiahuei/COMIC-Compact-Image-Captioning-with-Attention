@@ -12,12 +12,13 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import train_fn as train
 import os, sys, argparse
 CURR_DIR = os.path.dirname(os.path.realpath(__file__))
+sys.path.append(os.path.join(CURR_DIR, '..'))
 sys.path.append(os.path.join(CURR_DIR, '..', 'common'))
-import net_params
-import utils
+import train_fn as train
+import common.net_params as net_params
+import common.utils as utils
 pjoin = os.path.join
 
 
@@ -94,7 +95,7 @@ def create_parser():
         help='If True, add linear projection after multi-head attention.')
     parser.add_argument(
         '--attn_alignment_method', type=str, default='add_LN',
-        choices=['add_LN', 'dot'],
+        choices=['add_LN', 'add', 'dot'],
         help='Str, The alignment method / composition method.')
     parser.add_argument(
         '--attn_probability_fn', type=str, default='softmax',
@@ -161,6 +162,7 @@ def create_parser():
         help='The run number.')
     
     return parser
+
 
 if __name__ == '__main__':
 
@@ -231,7 +233,7 @@ if __name__ == '__main__':
     if args.train_mode == 'decoder':
         assert args.freeze_scopes == 'Model/encoder/cnn'
         # Maybe download weights
-        net = net_params.get_net_params(args.cnn_name)
+        net = net_params.get_net_params(args.cnn_name, ckpt_dir_or_file=args.checkpoint_path)
         utils.maybe_get_ckpt_file(net)
         args.checkpoint_path = net['ckpt_path']
         log_path = dec_dir
@@ -278,9 +280,6 @@ if __name__ == '__main__':
     
     kwargs = dict(
         rnn_layers = 1,
-        #infer_beam_size = 3,        # not used
-        #infer_max_length = 40,      # not used
-        
         dropout_rnn_in = 0.35,
         dropout_rnn_out = 0.35,
         rnn_map_loss_scale = 1.0,
