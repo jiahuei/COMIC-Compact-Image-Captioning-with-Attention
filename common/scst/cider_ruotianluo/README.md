@@ -3,8 +3,6 @@ CIDEr for Self-Critical Sequence Training (SCST)
 
 This module is based on the repo `ruotianluo/cider` (with modifications).
 
-It is **not compatible with COCO output format** due to dict key differences.
-
 Code for Consensus-based Image Description Evaluation. Provides CIDEr as well as
 CIDEr-D (CIDEr Defended) which is more robust to gaming effects.
 

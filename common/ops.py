@@ -18,7 +18,7 @@ import tensorflow as tf
 #from tensorflow.contrib.seq2seq.python.ops import attention_wrapper
 #from tensorflow.contrib.seq2seq.python.ops import beam_search_decoder
 #from tensorflow.python.layers.core import Dense
-from packaging import version
+#from packaging import version
 slim = tf.contrib.slim
 
 
@@ -260,17 +260,18 @@ def layer_norm_activate(scope,
                     reuse=False,
                     trainable=True,
                     scope=scope)
-    if version.parse(tf.__version__) >= version.parse('1.9'):
+    # if version.parse(tf.__version__) >= version.parse('1.9'):
+    try:
         outputs = tf.contrib.layers.layer_norm(
-                                            inputs=inputs,
-                                            begin_norm_axis=begin_norm_axis,
-                                            begin_params_axis=-1,
-                                            **ln_kwargs)
-    else:
+            inputs=inputs,
+            begin_norm_axis=begin_norm_axis,
+            begin_params_axis=-1,
+            **ln_kwargs)
+    except TypeError:
         print('WARNING: `layer_norm_activate`: `begin_norm_axis` is ignored.')
         outputs = tf.contrib.layers.layer_norm(
-                                            inputs=inputs,
-                                            **ln_kwargs)
+            inputs=inputs,
+            **ln_kwargs)
     return outputs
 
 

@@ -21,23 +21,24 @@ from tensorflow.python.layers.core import Dense
 #from tensorflow.python.framework import dtypes
 from ops import layer_norm_activate
 from ops import shape as _shape
-from packaging import version
+#from packaging import version
 AttentionWrapperState = tf.contrib.seq2seq.AttentionWrapperState
 
 
 def _layer_norm_tanh(tensor):
-    if version.parse(tf.__version__) >= version.parse('1.9'):
+    # if version.parse(tf.__version__) >= version.parse('1.9'):
+    try:
         tensor = layer_norm_activate(
-                                'LN_tanh',
-                                tensor,
-                                tf.nn.tanh,
-                                begin_norm_axis=-1)
-    else:
+            'LN_tanh',
+            tensor,
+            tf.nn.tanh,
+            begin_norm_axis=-1)
+    except TypeError:
         tensor_s = _shape(tensor)
         tensor = layer_norm_activate(
-                                'LN_tanh',
-                                tf.reshape(tensor, [-1, tensor_s[-1]]),
-                                tf.nn.tanh)
+            'LN_tanh',
+            tf.reshape(tensor, [-1, tensor_s[-1]]),
+            tf.nn.tanh)
         tensor = tf.reshape(tensor, tensor_s)
     return tensor
 

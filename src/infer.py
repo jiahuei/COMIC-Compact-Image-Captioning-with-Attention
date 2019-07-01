@@ -11,7 +11,8 @@ from __future__ import print_function
 
 import os, sys, argparse
 CURR_DIR = os.path.dirname(os.path.realpath(__file__))
-sys.path.append(os.path.join(CURR_DIR, '..', 'common'))
+BASE_DIR = os.path.dirname(CURR_DIR)
+sys.path.append(os.path.join(BASE_DIR, 'common'))
 import infer_fn as infer
 import configuration as conf
 #import ops
@@ -39,7 +40,7 @@ def create_parser():
         help='The annotations / reference file for calculating scores.')
     parser.add_argument(
         '--dataset_dir', type=str,
-        default=pjoin(CURR_DIR, 'datasets', 'mscoco'),
+        default=pjoin(BASE_DIR, 'datasets', 'mscoco'),
         help='Dataset directory.')
     parser.add_argument(
         '--run_inference', type=bool, default=True,
@@ -84,8 +85,7 @@ if __name__ == '__main__':
     args.infer_checkpoints_dir = pjoin(default_exp_dir, args.infer_checkpoints_dir)
     
     args.annotations_file = pjoin(
-            os.path.dirname(CURR_DIR),
-            'common', 'coco_caption', 'annotations', args.annotations_file)
+            BASE_DIR, 'common', 'coco_caption', 'annotations', args.annotations_file)
     
     if args.infer_checkpoints == 'all':
         files = sorted(os.listdir(args.infer_checkpoints_dir), key=nat_key)

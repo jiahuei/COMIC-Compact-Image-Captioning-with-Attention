@@ -38,9 +38,13 @@ If you find this repository useful for your research or work, please cite:
 - java 1.8.0
 - tqdm >= 4.24.0
 - Pillow >= 3.1.2
-- packaging >= 19.0
 - requests >= 2.18.4
 
+#### Installing Java 8 on Ubuntu
+1. Download the required `tar.gz` files from Oracle:
+    - [JDK 8](https://www.oracle.com/technetwork/es/java/javase/downloads/jdk8-downloads-2133151.html)
+    - [JCE 8](https://www.oracle.com/technetwork/java/javase/downloads/jce8-download-2133166.html)
+1. Follow instructions on [this repo](https://github.com/chrishantha/install-java/tree/63997dc81aaf9184ffe715d7381fa822bd39f357).
 
 ## Running the code
 **More examples are given in `example.sh`.**
@@ -108,6 +112,7 @@ python infer.py  \
 # InstaPIC
 python infer.py  \
 	--infer_checkpoints_dir 'insta/word_add_softmax_h8_ind_lstm_run_01'  \
+	--dataset_dir '/path/to/insta/dataset'  \
 	--annotations_file 'insta_testval_raw.json'
 ```
 
