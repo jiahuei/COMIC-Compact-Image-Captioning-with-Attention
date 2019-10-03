@@ -77,13 +77,32 @@ all_net_params = dict(
                     ckpt_path = 'inception_resnet_v2_2016_08_30.ckpt',
                     url = 'http://download.tensorflow.org/models/inception_resnet_v2_2016_08_30.tar.gz',
                     ),
+                mobilenet_v2 = dict(
+                    name = 'mobilenet_v2',
+                    ckpt_path = 'mobilenet_v2_1.0_224.ckpt',
+                    url = 'https://storage.googleapis.com/mobilenet_v2/checkpoints/mobilenet_v2_1.0_224.tgz',
+                    ),
+                mobilenet_v2_140 = dict(
+                    name = 'mobilenet_v2_140',
+                    ckpt_path = 'mobilenet_v2_1.4_224.ckpt',
+                    url = 'https://storage.googleapis.com/mobilenet_v2/checkpoints/mobilenet_v2_1.4_224.tgz',
+                    ),
                 )
 
 
-def get_net_params(net_name):
+def get_net_params(net_name, ckpt_dir_or_file=''):
     net_params = all_net_params[net_name]
-    base_dir = os.path.split(os.path.dirname(__file__))[0]
-    net_params['ckpt_path'] = pjoin(base_dir, 'ckpt', net_params['ckpt_path'])
+    ckpt_name = net_params['ckpt_path']
+
+    if ckpt_dir_or_file is None or ckpt_dir_or_file == '':
+        base_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+        ckpt_dir_or_file = pjoin(base_dir, 'ckpt', ckpt_name)
+    else:
+        if os.path.isdir(ckpt_dir_or_file):
+            ckpt_dir_or_file = pjoin(ckpt_dir_or_file, ckpt_name)
+        if os.path.isfile(ckpt_dir_or_file):
+            assert os.path.basename(ckpt_dir_or_file) == ckpt_name
+    net_params['ckpt_path'] = ckpt_dir_or_file
     return net_params
 
 
