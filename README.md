@@ -73,7 +73,8 @@ for mode in 'decoder' 'cnn_finetune' 'scst'
 do
     python train.py  \
         --train_mode ${mode}  \
-        --dataset_file_pattern 'insta_{}_v25595_s15'
+        --dataset_file_pattern 'insta_{}_v25595_s15'  \
+        --batch_size_eval 50
 done
 ```
 #### Baseline
@@ -96,7 +97,8 @@ do
         --dataset_file_pattern 'insta_{}_v25595_s15'  \
         --token_type 'word'  \
         --cnn_fm_projection 'none'  \
-        --attn_num_heads 1
+        --attn_num_heads 1  \
+        --batch_size_eval 50
 done
 ```
 

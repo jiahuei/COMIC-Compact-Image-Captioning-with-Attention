@@ -19,12 +19,14 @@ python train.py  \
 
 # InstaPIC
 python train.py  \
-    --dataset_file_pattern 'insta_{}_v25595_s15'
+    --dataset_file_pattern 'insta_{}_v25595_s15'  \
+    --batch_size_eval 50
 
 # Custom InstaPIC directory
 python train.py  \
     --dataset_file_pattern 'insta_{}_v25595_s15'  \
-	--dataset_dir '/home/jiahuei/Documents/3_Datasets/InstaPIC'
+	  --dataset_dir '/home/jiahuei/Documents/3_Datasets/InstaPIC'  \
+    --batch_size_eval 50
 
 
 ### Inference
