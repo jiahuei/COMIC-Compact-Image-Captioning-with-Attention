@@ -138,11 +138,14 @@ def run_inference(config, curr_ckpt_path):
             
             for i, f in enumerate(batch_filenames):
                 image_id = f.replace('.jpg', '')
-                image_id = P_COCO.findall(image_id)
-                if len(image_id) > 0:
-                    image_id = int(image_id[0])
+                if '@' in image_id:
+                    image_id = os.path.basename(image_id)
                 else:
-                    image_id = int(image_id)
+                    image_id = P_COCO.findall(image_id)
+                    if isinstance(image_id, list) and len(image_id) > 0:
+                        image_id = int(image_id[0])
+                    else:
+                        raise ValueError('Expected `image_id` to be list or string, saw `{}`'.format(type(image_id)))
                 raw_outputs['captions'][f] = captions[i]
                 #if c.infer_beam_size == 1:
                 raw_outputs['attention'][f] = attn_maps[i]

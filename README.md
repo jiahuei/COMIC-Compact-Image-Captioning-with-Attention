@@ -115,7 +115,7 @@ python infer.py  \
 python infer.py  \
 	--infer_checkpoints_dir 'insta/word_add_softmax_h8_ind_lstm_run_01'  \
 	--dataset_dir '/path/to/insta/dataset'  \
-	--annotations_file 'insta_testval_raw.json'
+	--annotations_file 'insta_testval_clean.json'
 ```
 
 
