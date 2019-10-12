@@ -27,7 +27,10 @@ If you find this repository useful for your research or work, please cite:
   title={COMIC: Towards A Compact Image Captioning Model with Attention},
   author={Tan, Jia Huei and Chan, Chee Seng and Chuah, Joon Huang},
   journal={IEEE Transactions on Multimedia},
-  year={in Press},
+  year={2019},
+  volume={21},
+  number={10},
+  pages={2686-2696},
   publisher={IEEE}
 }
 ```
