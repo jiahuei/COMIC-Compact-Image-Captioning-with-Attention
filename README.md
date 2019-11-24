@@ -129,7 +129,7 @@ python infer.py  \
 |   +-- {shared libraries and utility functions}
 +-- datasets
 |   +-- preprocessing
-|       +-- {dataset pre-processing scripts}
+|   |   +-- {dataset pre-processing scripts}
 |   +-- {dataset folders created by pre-processing scripts, eg 'mscoco'}
 +-- pretrained
 |   +-- {pre-trained checkpoints for some COMIC models. Details are provided in a separate README.}
