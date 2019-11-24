@@ -125,6 +125,8 @@ python infer.py  \
 ## Project structure
 ```
 .
++-- src
+|   +-- {main scripts}
 +-- common
 |   +-- {shared libraries and utility functions}
 +-- datasets
@@ -132,9 +134,7 @@ python infer.py  \
 |   |   +-- {dataset pre-processing scripts}
 |   +-- {dataset folders created by pre-processing scripts, eg 'mscoco'}
 +-- pretrained
-|   +-- {pre-trained checkpoints for some COMIC models. Details are provided in a separate README.}
-+-- src
-    +-- {main scripts}
+    +-- {pre-trained checkpoints for some COMIC models. Details are provided in a separate README.}
 ```
 
 
