@@ -1,8 +1,12 @@
 # COMIC: Towards a Compact Image Captioning Model with Attention
 
-Updated on 12 June 2019 (Self-Critical Sequence Training (SCST))
+Updated on 25 Feb 2021: [Object Relation Transformer](https://papers.nips.cc/paper/9293-image-captioning-transforming-objects-into-words.pdf) 
+with Radix encoding that can achieve CIDEr score of 1.291 after SCST training.
+[Code at this repo](https://github.com/jiahuei/sparse-image-captioning).
 
-Updated on 06 June 2019 (Pre-trained model repo)
+Updated on 12 June 2019: Self-Critical Sequence Training (SCST)
+
+Updated on 06 June 2019: Pre-trained model repo
 
 Released on 03 June 2019.
 
@@ -203,7 +207,9 @@ last training checkpoint of RNN training.
 - Context layer (linear projection after attention)
 - Self-Critical Sequence Training (SCST) [[arxiv]](https://arxiv.org/abs/1612.00563)
 
-### Performance on MS-COCO (using Inception-V1 and LSTM)
+### Performance on MS-COCO
+
+**Inception-V1 and LSTM:**
 
 | Default mode      | Decoder params.   | BLEU-1    | BLEU-4    | CIDEr     | SPICE     |
 | -------------     | ---------         | --------- | --------- | --------- | --------- |
@@ -226,6 +232,16 @@ The differences are due to reimplementation from TF-1.2.
 
 Please see [above](https://github.com/jiahuei/COMIC-Compact-Image-Captioning-with-Attention#description) 
 for info on downloading checkpoints of the models listed above.
+
+**Object Relation Transformer:**
+
+| Default mode      | Decoder params.   | BLEU-1    | BLEU-4    | CIDEr     | SPICE     |
+| -------------     | ---------         | --------- | --------- | --------- | --------- |
+| Baseline          | 55.44 M           | 0.756     | 0.348     | 1.135     | 0.213     |
+| **Radix**         | 45.98 M           | 0.756     | 0.349     | 1.135     | 0.209     |
+| + SCST, beam = 5  |                   | 0.803     | 0.390     | 1.291     | 0.213     |
+
+[Transformer code at this repo](https://github.com/jiahuei/sparse-image-captioning).
 
 
 ## Main arguments
