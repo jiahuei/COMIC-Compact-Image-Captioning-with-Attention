@@ -23,6 +23,11 @@ We showed competitive results on both MS-COCO and InstaPIC-1.1M datasets despite
 [this repo](https://github.com/jiahuei/COMIC-Pretrained-Captioning-Models).**
 
 
+## Visualisation
+
+You can explore and visualise generated captions [using this Streamlit app](https://github.com/jiahuei/MSCOCO-caption-explorer).
+
+
 ## Citation
 If you find this repository useful for your research or work, please cite:
 
